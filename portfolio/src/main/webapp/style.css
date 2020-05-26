@@ -7,8 +7,12 @@
     width: 60%;
 }
 
-#hobby-container {
+#hobby-wrapper {
+    background-color: antiquewhite; 
     margin-top: 3%;
+    max-width: 150px;
+    height: 100px;
+    padding: 2%; 
 }
 
 #headshot {
@@ -29,17 +33,42 @@
 }
 
 .h3, .li, .p {
-    font-size: 20px;
+    font-size: 25px;
 }
 
 
-#projects {
+#project-wrapper {
+    /* border-style:solid;  */
+    margin-right: 20%; 
     display: grid;
-    grid-template-columns: auto, auto; 
+    grid-template-columns: auto auto ; 
+    grid-column-gap: 0;
+    grid-row-gap: 0; 
+    padding-top: 2%;
+    padding-bottom: 3%; 
 
 }
 
-.project {
-    min-width: 20%;
-    max-width: 30%;
+#project-nlp, #project-ta, #project-helmet {
+    min-width: 100px;
+    padding-left: 3%;
+    padding-right: 3%; 
+}
+
+#project-nlp {
+    background-color: #6ccfe0;
+    grid-column-start: 1;
+    grid-row-start: 1;
+}
+
+#project-ta {
+    background-color: #f7d36f;
+    grid-column-start: 2;
+    grid-row-start: 2;
+}
+
+#project-helmet{
+    background-color: #e0b9f0;
+    grid-column-start: 1;
+    grid-row-start: 3;
 }
