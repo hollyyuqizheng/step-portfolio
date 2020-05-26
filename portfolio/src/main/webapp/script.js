@@ -17,7 +17,7 @@
  */
 function addRandomHobby() {
   const hobbies =
-      ['Clarinet', 'books', 'español'];
+      ['playing the Clarinet', 'reading mystery novels', '(trying to) speak Spanish', 'making pasta from different cuisine'];
 
   // Pick a random greeting.
   const hobby = hobbies[Math.floor(Math.random() * hobbies.length)];
