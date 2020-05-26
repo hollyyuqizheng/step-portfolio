@@ -1,18 +1,19 @@
 #introduction, #basic-info, #projects {
-    border-style: solid; 
-  margin-left: 20%;
-  margin-right: 20%;
-  padding-left: 10%; 
-  padding-right: 5%; 
-  width: 60%;
+    /* border-style: solid;  */
+    margin-left: 20%;
+    margin-right: 20%;
+    padding-left: 10%; 
+    padding-right: 5%; 
+    width: 60%;
 }
 
 #hobby-container {
-  margin-top: 3%;
+    margin-top: 3%;
 }
 
 #headshot {
     min-width: 500px;
+    max-width: 600px; 
 }
 
 .h1, .h2, .h3, .li, .p {
@@ -20,15 +21,15 @@
 }
 
 .h1 {
-    font-size: 30px;
+    font-size: 35px;
 }
 
 .h2 {
-    font-size: 25px;
+    font-size: 30px;
 }
 
 .h3, .li, .p {
-    font-size: 15px;
+    font-size: 20px;
 }
 
 
