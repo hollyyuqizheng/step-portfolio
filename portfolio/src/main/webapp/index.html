@@ -9,9 +9,13 @@
   <body>
     <div id="introduction">
         <h1>Hi there! </h1>
-        <img id="headshot" src="headshot.jpg" /> 
-        <p> My name is Holly, and this is the small place on the Internet that has my portfolio. </p>
-        <p class="smallText"> Click here to see some of my hobbies:</p>
+
+        <div id="headshotWrapper">
+            <img id="headshot" src="city.jpg" alt="city skyline"/> 
+            <div id="caption"> My name is Holly, and this is the small place on the Internet that has my portfolio. </div> 
+        </div>
+        
+        <p> Click here to see some of my hobbies:</p>
         <button onclick="addRandomHobby()">What are my hobbies? </button>
         <div id="hobby-wrapper">
             <div id="hobby-container"></div>
@@ -32,22 +36,24 @@
 
     <div id="projects">
         <h2> What I have been working on </h2> 
+        <h3> (Click on each project to see more details!) </h3> 
 
         <div id="project-wrapper">
-            <div id="project-nlp"> 
+            <div id="project-nlp" onClick="addProjectDescription('nlp')"> 
                 <h3> Natural Language Processing research </h3>
-                <p> Building language models </p> 
             </div> 
+            <div id="project-description-nlp"></div>
 
-            <div id="project-ta"> 
-                <h3> Teaching Assistant for Introductory CS course </h3>
-                <p> Held weekly office hours and review sessions for introductory Data Structure and Algorithms class</p> 
+            <div id="project-ta" onClick="addProjectDescription('ta')"> 
+                <h3> Teaching Assistant for Introductory CS course </h3>               
             </div>
+            <div id="project-description-ta"></div> 
 
-            <div id="project-helmet"> 
-                <h3> Multifunctional bike helmet </h3>
-                <p> Integrated speech command to a "smart" bike helmet built by a team of 9 friends</p> 
+            <div id="project-helmet" onClick="addProjectDescription('helmet')"> 
+                <h3> Multifunctional bike helmet </h3>         
             </div>
+            <div id="project-description-helmet"></div>  
+
         </div>
         
     </div>
