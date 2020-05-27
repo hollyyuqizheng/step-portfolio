@@ -19,14 +19,13 @@
  * and updating the wrapper's background color so that it appears 
  */
 function addHobby() {
-
-    var hobbies = 'playing the Clarinet, reading mystery novels, (trying to) speak Spanish';
-
-    const hobbyContainer = document.getElementById('hobby-container');
-    hobbyContainer.innerText = hobbies;
-
-    const hobbyWrapper = document.getElementById('hobby-wrapper');
-    hobbyWrapper.style.backgroundColor = 'antiquewhite';
+  var hobbies = 'playing the Clarinet, reading mystery novels, (trying to) speak Spanish';
+  
+  const hobbyContainer = document.getElementById('hobby-container');
+  hobbyContainer.innerText = hobbies;
+  
+  const hobbyWrapper = document.getElementById('hobby-wrapper');
+  hobbyWrapper.style.backgroundColor = 'antiquewhite';
 }
 
 
@@ -39,28 +38,28 @@ function addHobby() {
 * - If the project doesn't exist, a general "something is wrong" is displayed in the description box 
 */
 function addProjectDescription(project) {
-
-    const details = {
-        nlp: 'Building language models',
-        ta: 'Held weekly office hours and review sessions for introductory Data Structure and Algorithms class',
-        helmet: 'Integrated speech command to a \"smart\" bike helmet built by a team of 9 friends',
-        unknown: 'Something is wrong, project doesn\'t exist'
-    };
-
-    const colors = {
-        nlp: '#6ccfe0',
-        ta: '#f7d36f',
-        helmet: '#e0b9f0',
-        unknown: 'black'
-    };
-
-    if (! (project in details)) {
-        project = 'unknown'; 
-    };
-
-    const wrapperName = 'project-description-';
-    const wrapper = document.getElementById(wrapperName.concat(project));
-
-    wrapper.innerText = details[project]; 
-    wrapper.style.backgroundColor = colors[project];
+  
+  const details = {
+    nlp: 'Building language models',
+    ta: 'Held weekly office hours and review sessions for introductory Data Structure and Algorithms class',
+    helmet: 'Integrated speech command to a \"smart\" bike helmet built by a team of 9 friends',
+    unknown: 'Something is wrong, project doesn\'t exist'
+  };
+  
+  const colors = {
+    nlp: '#6ccfe0',
+    ta: '#f7d36f',
+    helmet: '#e0b9f0',
+    unknown: 'black'
+  };
+  
+  if (!(project in details)) {
+    project = 'unknown'; 
+  };
+  
+  const wrapperName = 'project-description-';
+  const wrapper = document.getElementById(wrapperName.concat(project));
+  
+  wrapper.innerText = details[project]; 
+  wrapper.style.backgroundColor = colors[project];
 }

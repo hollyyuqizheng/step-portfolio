@@ -8,62 +8,52 @@
   </head>
   <body>
     <div id="pageWrapper">
-        <div id="introduction">
-            <h1>Hi there!</h1>
-
-            <div id="headshotWrapper">
-                <img id="headshot" src="city.jpg" alt="city skyline"/> 
-                <div id="caption">My name is Holly, and this is a small place on the Internet that has my portfolio.</div> 
-            </div>
-            
-            <p>Click here to see some of my hobbies:</p>
-            <button onclick="addHobby()">What are my hobbies?</button>
-            <div id="hobby-wrapper">
-                <div id="hobby-container"></div>
+      <div id="introduction">
+        <h1>Hi there!</h1>
+        <div id="headshotWrapper">
+        <img id="headshot" src="city.jpg" alt="city skyline"/> 
+          <div id="caption">My name is Holly, and this is a small place on the Internet that has my portfolio.</div> 
+        </div>   
+        <p>Click here to see some of my hobbies:</p>
+        <button onclick="addHobby()">What are my hobbies?</button>
+        <div id="hobby-wrapper">
+          <div id="hobby-container"></div>
+        </div> 
+      </div>
+      
+      <div id="rightColumn"> 
+        <div id="basicInfo">
+          <h2>A few bullet points about me</h2>
+          <ul> 
+            <li>Studying Computer Science and Linguistics at Brown University</li>  
+            <li>Currently: Building Web App at Google (STEP internship)</li>
+            <li>Hobbies: playing the Clarinet, reading novels, (trying to) talk in Spanish</li> 
+            <li>Find me on<a href="https://linkedin.com/in/hollyyuqizheng" target="_blank"> LinkedIn</a> 
+                and<a href="https://github.com/hollyyuqizheng" target="_blank"> GitHub</a></li> 
+          </ul> 
+        </div> 
+      
+        <div id="projects">
+          <h2>What I have been working on</h2> 
+          <h3>(Click on each project to see more details!)</h3> 
+          <div id="project-wrapper">
+            <div id="project-nlp" onClick="addProjectDescription('nlp')"> 
+              <h3>Natural Language Processing research</h3>
             </div> 
-            
-        </div>
+            <div id="project-description-nlp"></div>
 
-        <div id="rightColumn"> 
-            <div id="basicInfo">
-                <h2>A few bullet points about me</h2>
-                <ul> 
-                    <li>Studying Computer Science and Linguistics at Brown University</li>  
-                    <li>Currently: Building Web App at Google (STEP internship)</li>
-                    <li>Hobbies: playing the Clarinet, reading novels, (trying to) talk in Spanish</li> 
-                    <li>Find me on<a href="https://linkedin.com/in/hollyyuqizheng" target="_blank"> LinkedIn</a> 
-                        and<a href="https://github.com/hollyyuqizheng" target="_blank"> GitHub</a></li> 
-                </ul> 
-            </div> 
-
-            <div id="projects">
-                <h2>What I have been working on</h2> 
-                <h3>(Click on each project to see more details!)</h3> 
-
-                <div id="project-wrapper">
-                    <div id="project-nlp" onClick="addProjectDescription('nlp')"> 
-                        <h3>Natural Language Processing research</h3>
-                    </div> 
-                    <div id="project-description-nlp"></div>
-
-                    <div id="project-ta" onClick="addProjectDescription('ta')"> 
-                        <h3>Teaching Assistant for Introductory CS course</h3>               
-                    </div>
-                    <div id="project-description-ta"></div> 
-
-                    <div id="project-helmet" onClick="addProjectDescription('helmet')"> 
-                        <h3>Multifunctional bike helmet</h3>         
-                    </div>
-                    <div id="project-description-helmet"></div>  
-
-                </div>
-        
+            <div id="project-ta" onClick="addProjectDescription('ta')"> 
+              <h3>Teaching Assistant for Introductory CS course</h3>
             </div>
-
+            <div id="project-description-ta"></div>
+          
+            <div id="project-helmet" onClick="addProjectDescription('helmet')"> 
+              <h3>Multifunctional bike helmet</h3>         
+            </div>
+            <div id="project-description-helmet"></div>  
+          </div>
         </div>
-    
-    </div>
-    
-        
+      </div>   
+    </div>    
   </body>
 </html>
