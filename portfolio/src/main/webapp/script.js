@@ -15,22 +15,24 @@
 
 
 /**
- * Adds a random hobby to the page by displaying the hobby's description text
+ * Adds a list of hobbies to the page by displaying the hobby's description text
  * and updating the wrapper's background color so that it appears 
  */
-function addRandomHobby() {
-  const hobbies =
-      ['playing the Clarinet', 'reading mystery novels', '(trying to) speak Spanish', 'making pasta from different cuisine'];
+function addHobby() {
 
-  // Pick a random greeting.
-  const hobby = hobbies[Math.floor(Math.random() * hobbies.length)];
+    // const hobbies =
+    //   ['playing the Clarinet', 'reading mystery novels', '(trying to) speak Spanish', 'making pasta from different cuisine'];
 
-  // Add it to the page.
-  const hobbyContainer = document.getElementById('hobby-container');
-  hobbyContainer.innerText = hobby;
+    var hobbies = 'playing the Clarinet, reading mystery novels, (trying to) speak Spanish';
 
-  const hobbyWrapper = document.getElementById('hobby-wrapper');
-  hobbyWrapper.style.backgroundColor = 'antiquewhite';
+    // Pick a random greeting.
+    //const hobby = hobbies[Math.floor(Math.random() * hobbies.length)];
+
+    const hobbyContainer = document.getElementById('hobby-container');
+    hobbyContainer.innerText = hobbies;
+
+    const hobbyWrapper = document.getElementById('hobby-wrapper');
+    hobbyWrapper.style.backgroundColor = 'antiquewhite';
 }
 
 

@@ -1,14 +1,28 @@
-#introduction, #basic-info, #projects {
-    /* border-style: solid;  */
-    margin-left: 20%;
-    margin-right: 20%;
+#pageWrapper {
+    display: grid;
+    grid-template-columns: 40% auto;
+    grid-column-gap: 5%; 
+}
+
+#introduction, #basicInfo, #projects {
+    margin-left: 10%;
+    margin-right: 10%; 
     padding-left: 10%; 
     padding-right: 5%; 
-    width: 60%;
+    max-width: 60%;
+}
+
+#introduction {
+    grid-column-start: 1;
+
+}
+
+#rightColumn {
+    grid-column-start: 2; 
 }
 
 #hobby-wrapper {
-    margin-top: 3%;
+    margin-top: 1%;
     max-width: 150px;
     height: 100px;
     padding: 2%; 
@@ -61,7 +75,6 @@
 
 
 #project-wrapper {
-    /* border-style:solid;  */
     margin-right: 20%; 
     display: grid;
     grid-template-columns: auto auto ; 
@@ -69,7 +82,6 @@
     grid-row-gap: 0; 
     padding-top: 2%;
     padding-bottom: 3%; 
-
 }
 
 
