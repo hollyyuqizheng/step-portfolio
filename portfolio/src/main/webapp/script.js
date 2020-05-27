@@ -20,13 +20,7 @@
  */
 function addHobby() {
 
-    // const hobbies =
-    //   ['playing the Clarinet', 'reading mystery novels', '(trying to) speak Spanish', 'making pasta from different cuisine'];
-
     var hobbies = 'playing the Clarinet, reading mystery novels, (trying to) speak Spanish';
-
-    // Pick a random greeting.
-    //const hobby = hobbies[Math.floor(Math.random() * hobbies.length)];
 
     const hobbyContainer = document.getElementById('hobby-container');
     hobbyContainer.innerText = hobbies;
