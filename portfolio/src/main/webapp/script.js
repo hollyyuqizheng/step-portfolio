@@ -12,17 +12,54 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
+
 /**
- * Adds a random greeting to the page.
+ * Adds a list of hobbies to the page by displaying the hobby's description text
+ * and updating the wrapper's background color so that it appears 
  */
-function addRandomGreeting() {
-  const greetings =
-      ['Hello world!', '¡Hola Mundo!', '你好，世界！', 'Bonjour le monde!'];
+function addHobby() {
+  var hobbies = 'playing the Clarinet, reading mystery novels, (trying to) speak Spanish';
+  
+  const hobbyContainer = document.getElementById('hobby-container');
+  hobbyContainer.innerText = hobbies;
+  
+  const hobbyWrapper = document.getElementById('hobby-wrapper');
+  hobbyWrapper.style.backgroundColor = 'antiquewhite';
+}
 
-  // Pick a random greeting.
-  const greeting = greetings[Math.floor(Math.random() * greetings.length)];
 
-  // Add it to the page.
-  const greetingContainer = document.getElementById('greeting-container');
-  greetingContainer.innerText = greeting;
+/**
+ * This function is called when any of the project box is clicked.
+ * Input: string -- name of the selected project
+ * Results: 
+ * - change the text of the project description box so that the description text appears. 
+ * - change the background color of the description box so that it seems like the box appears
+ * - If the project doesn't exist, a general "something is wrong" is displayed in the description box 
+ */
+function addProjectDescription(project) {
+  
+  const details = {
+    nlp: 'Building language models',
+    ta: 'Held weekly office hours and review sessions for introductory Data Structure and Algorithms class',
+    helmet: 'Integrated speech command to a \"smart\" bike helmet built by a team of 9 friends',
+    unknown: 'Something is wrong, project doesn\'t exist'
+  };
+  
+  const colors = {
+    nlp: '#6ccfe0',
+    ta: '#f7d36f',
+    helmet: '#e0b9f0',
+    unknown: 'black'
+  };
+  
+  if (!(project in details)) {
+    project = 'unknown'; 
+  };
+  
+  const wrapperName = 'project-description-';
+  const wrapper = document.getElementById(wrapperName.concat(project));
+  
+  wrapper.innerText = details[project]; 
+  wrapper.style.backgroundColor = colors[project];
 }
