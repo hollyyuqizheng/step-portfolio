@@ -124,13 +124,13 @@
   grid-row-start: 2;
 }
 
-#project-helmet{
+#project-helmet {
   background-color: #e0b9f0;
   grid-column-start: 1;
   grid-row-start: 3;
 }
 
-#project-description-helmet{
+#project-description-helmet {
   grid-column-start: 2;
   grid-row-start: 3;
 }
