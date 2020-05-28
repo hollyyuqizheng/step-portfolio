@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
-
 /**
  * Adds a list of hobbies to the page by displaying the hobby's description text
  * and updating the wrapper's background color so that it appears 
@@ -27,7 +25,6 @@ function addHobby() {
   const hobbyWrapper = document.getElementById('hobby-wrapper');
   hobbyWrapper.style.backgroundColor = 'antiquewhite';
 }
-
 
 /**
  * This function is called when any of the project box is clicked.
@@ -65,13 +62,23 @@ function addProjectDescription(project) {
 }
 
 /**
- * This function toggles the border style of the basicInfo and the projects section.
+ * This function enables the highlighting of a selected section from the navigation bar. 
  * This function is called by the clicking of any one of the boxes in the navigation bar.
- * Input: section to select; the other section
- * Effect: selected section will have their border shown, and the other section will not have the border. 
+ * Input: section to select
+ * Effect: selected section will have their border shown, and all the other sections will not have the border. 
  */
-function highlightSection(select, other) {
+function highlightSection(select) {
+
   document.getElementById(select).style.border = 'solid';
   document.getElementById(select).style.borderColor = '#c5cf0a';
-  document.getElementById(other).style.border = 'none'; 
+
+  var navbarSections = document.getElementsByClassName('navbarSection');
+
+  for (var i = 0; i < navbarSections.length; i++) {
+    var currSection = navbarSections[i];
+    if (currSection.id !== select) {
+      currSection.style.border = 'none'; 
+    }
+  }
+
 }

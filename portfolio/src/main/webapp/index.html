@@ -9,8 +9,9 @@
   <body>
     <div id="pageWrapper">
       <div id="navbar">
-        <div class="navButton" onClick="highlightSection('basicInfo', 'projects')">Introduction</div> 
-        <div class="navButton" onClick="highlightSection('projects', 'basicInfo')">Projects</div> 
+        <div class="navButton" onClick="highlightSection('basicInfo')">Introduction</div> 
+        <div class="navButton" onClick="highlightSection('hobby-wrapper')">Hobbies</div> 
+        <div class="navButton" onClick="highlightSection('projects')">Projects</div> 
       </div> 
 
       <div id="introduction">
@@ -21,13 +22,13 @@
         </div>   
         <p>Click here to see some of my hobbies:</p>
         <button onclick="addHobby()">What are my hobbies?</button>
-        <div id="hobby-wrapper">
+        <div id="hobby-wrapper" class="navbarSection">
           <div id="hobby-container"></div>
         </div> 
       </div>
       
       <div id="rightColumn"> 
-        <div id="basicInfo">
+        <div id="basicInfo" class="navbarSection">
           <h2>A few bullet points about me</h2>
           <ul> 
             <li>Studying Computer Science and Linguistics at Brown University</li>  
@@ -38,7 +39,7 @@
           </ul> 
         </div> 
       
-        <div id="projects">
+        <div id="projects" class="navbarSection">
           <h2>What I have been working on</h2> 
           <h3>(Click on each project to see more details!)</h3> 
           <div id="project-wrapper">
