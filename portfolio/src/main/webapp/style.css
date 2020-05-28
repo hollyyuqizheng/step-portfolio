@@ -3,15 +3,23 @@
     display: grid;
     grid-template-columns: 40% auto;
     grid-column-gap: 5%; 
+    padding-bottom: 3%;
   }
 
-  #navbar {
-    grid-row-start: 1; 
+  #navbar, #footer {
     grid-column-start: 1;
     grid-column-end: span 2; 
     padding-left: 10%;
     padding-right: 40%; 
     min-height: 5%; 
+  }
+
+  #navbar {
+    grid-row-start: 1; 
+  }
+
+  #footer {
+    grid-row-start: 3; 
   }
 
   #introduction {
@@ -38,14 +46,17 @@
   margin-left: 10%;
 }
 
-#navbar {
+#navbar, #footer {
   background-color: #047fbd; 
   display: inline-flex; 
   width: 100%; 
 }
 
+#footer {
+  color: aliceblue; 
+}
+
 .navButton {
-  border-style: solid; 
   font: 20pt; 
   padding: 5px;
   color: black; 

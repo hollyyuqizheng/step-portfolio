@@ -80,5 +80,4 @@ function highlightSection(select) {
       currSection.style.border = 'none'; 
     }
   }
-
 }
