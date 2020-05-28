@@ -5,21 +5,53 @@
     grid-column-gap: 5%; 
   }
 
+  #navbar {
+    grid-row-start: 1; 
+    grid-column-start: 1;
+    grid-column-end: span 2; 
+    padding-left: 10%;
+    padding-right: 40%; 
+    min-height: 5%; 
+    display: inline-flex; 
+  }
+
   #introduction {
+    grid-row-start: 2;
     grid-column-start: 1;
   }
 
   #rightColumn {
+    grid-row-start: 2; 
     grid-column-start: 2; 
   }
 } 
 
 #introduction, #basicInfo, #projects {
-  margin-left: 10%;
-  margin-right: 10%; 
-  padding-left: 10%; 
+  margin-left: 5%;
+  margin-right: 5%; 
+  padding-left: 5%; 
   padding-right: 5%; 
-  max-width: 60%;
+  max-width: 80%;  
+}
+
+#introduction {
+  margin-right: 10%; 
+  margin-left: 10%;
+}
+
+#navbar {
+  background-color: #047fbd; 
+}
+
+.navButton {
+  border-style: solid; 
+  font: 20pt; 
+  padding: 5px;
+  color: black; 
+  background-color: antiquewhite; 
+  max-width: 100px;
+  min-width: 80px; 
+  margin: 5%; 
 }
 
 #hobby-wrapper {
@@ -32,7 +64,7 @@
 #headshotWrapper {
   position: relative; 
   min-width: 500px;
-  max-width: 600px; 
+  max-width: 600px;  
 }
 
 #headshot {
@@ -74,7 +106,6 @@
   font-size: 25px;
 }
 
-
 #project-wrapper {
   margin-right: 20%; 
   display: grid;
@@ -84,8 +115,6 @@
   padding-top: 2%;
   padding-bottom: 3%; 
 }
-
-
 
 #project-nlp, #project-ta, #project-helmet, #project-description-nlp, #project-description-ta, #project-description-helmet {
   width: 350px;
@@ -100,7 +129,6 @@
   font-size: 15px; 
   font-family: 'Trebuchet MS', Arial, sans-serif;
 }
-
 
 #project-nlp {
   background-color: #6ccfe0;

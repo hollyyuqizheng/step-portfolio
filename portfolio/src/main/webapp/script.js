@@ -63,3 +63,15 @@ function addProjectDescription(project) {
   wrapper.innerText = details[project]; 
   wrapper.style.backgroundColor = colors[project];
 }
+
+/**
+ * This function toggles the border style of the basicInfo and the projects section.
+ * This function is called by the clicking of any one of the boxes in the navigation bar.
+ * Input: section to select; the other section
+ * Effect: selected section will have their border shown, and the other section will not have the border. 
+ */
+function highlightSection(select, other) {
+  document.getElementById(select).style.border = 'solid';
+  document.getElementById(select).style.borderColor = '#c5cf0a';
+  document.getElementById(other).style.border = 'none'; 
+}
