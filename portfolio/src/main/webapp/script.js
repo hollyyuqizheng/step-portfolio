@@ -17,7 +17,7 @@
  * and updating the wrapper's background color so that it appears 
  */
 function addHobby() {
-  var hobbies = 'playing the Clarinet, reading mystery novels, (trying to) speak Spanish';
+  let hobbies = 'playing the Clarinet, reading mystery novels, (trying to) speak Spanish';
   
   const hobbyContainer = document.getElementById('hobbyContainer');
   hobbyContainer.innerText = hobbies;
@@ -25,6 +25,7 @@ function addHobby() {
   const hobbyWrapper = document.getElementById('hobbyWrapper');
   hobbyWrapper.style.backgroundColor = 'antiquewhite';
 }
+
 
 /**
  * This function is called when any of the project box is clicked.
@@ -36,29 +37,39 @@ function addHobby() {
  */
 function addProjectDescription(project) {
   
-  const details = {
-    Nlp: 'Building language models',
-    Ta: 'Held weekly office hours and review sessions for introductory Data Structure and Algorithms class',
-    Helmet: 'Integrated speech command to a \"smart\" bike helmet built by a team of 9 friends',
-    unknown: 'Something is wrong, project doesn\'t exist'
-  };
+  let projectName = project.toUpperCase(); 
+
+  const projectNameToData = {
+    NLP: createProjectData('Building language models', '#6ccfe0'),
+    TA: createProjectData('Held weekly office hours and review sessions for introductory Data Structure and Algorithms class', '#f7d36f'),
+    HELMET: createProjectData('Integrated speech command to a \"smart\" bike helmet built by a team of 9 friends', '#e0b9f0'),
+    UNKNOWN: createProjectData('Something is wrong, project doesn\'t exist', 'black')
+  }
   
-  const colors = {
-    Nlp: '#6ccfe0',
-    Ta: '#f7d36f',
-    Helmet: '#e0b9f0',
-    unknown: 'black'
-  };
-  
-  if (!(project in details)) {
-    project = 'unknown'; 
+  if (!(projectName in projectNameToData)) {
+    projectName = 'UNKNOWN'; 
   };
   
   const wrapperName = 'projectDescription';
   const wrapper = document.getElementById(wrapperName.concat(project));
   
-  wrapper.innerText = details[project]; 
-  wrapper.style.backgroundColor = colors[project];
+  wrapper.innerText = projectNameToData[projectName]['projectDetail']; 
+  wrapper.style.backgroundColor = projectNameToData[projectName]['backgroundColor']; 
+}
+
+
+/**
+ * This is the helper function for addProjectDescription.
+ * This function creates a data key-value pair object for each project.
+ * Input: 
+ */
+function createProjectData(projectDetail, backgroundColor) {
+ 
+  projectData = {}
+  projectData['projectDetail'] = projectDetail;
+  projectData['backgroundColor'] = backgroundColor; 
+
+  return projectData; 
 }
 
 /**
@@ -67,17 +78,17 @@ function addProjectDescription(project) {
  * Input: section to select
  * Effect: selected section will have their border shown, and all the other sections will not have the border. 
  */
-function highlightSection(select) {
+function highlightSection(selectedIdString) {
 
-  document.getElementById(select).style.border = 'solid';
-  document.getElementById(select).style.borderColor = '#c5cf0a';
+  document.getElementById(selectedIdString).style.border = 'solid';
+  document.getElementById(selectedIdString).style.borderColor = '#c5cf0a';
 
-  var navbarSections = document.getElementsByClassName('navbarSection');
+  let navbarSections = document.getElementsByClassName('navbarSection');
 
   Object.keys(navbarSections).forEach(
     (key) => {
       var section = navbarSections[key];
-      if (section.id !== select) {
+      if (section.id !== selectedIdString) {
         section.style.border = 'none'; 
       }
     }); 
