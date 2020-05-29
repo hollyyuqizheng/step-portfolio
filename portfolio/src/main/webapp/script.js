@@ -74,18 +74,11 @@ function highlightSection(select) {
 
   var navbarSections = document.getElementsByClassName('navbarSection');
 
-  // navbarSections.forEach (
-  //   (section) => {
-  //     if (section.id !== select) {
-  //       console.log(section.id);
-  //       section.style.border = 'none'; 
-  //     }
-  //   }); 
-  
-  for (section of navbarSections) {
-    if (section.id !== select) {
-      section.style.border = 'none'; 
-    }
-  }
-
+  Object.keys(navbarSections).forEach(
+    (key) => {
+      var section = navbarSections[key];
+      if (section.id !== select) {
+        section.style.border = 'none'; 
+      }
+    }); 
 }

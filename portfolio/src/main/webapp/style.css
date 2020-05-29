@@ -6,7 +6,8 @@
     padding-bottom: 3%;
   }
 
-  #navbar, #footer {
+  #navbar, 
+  #footer {
     grid-column-start: 1;
     grid-column-end: span 2;
     min-height: 5%; 
@@ -33,7 +34,9 @@
   }
 } 
 
-#introduction, #basicInfo, #projects {
+#introduction, 
+#basicInfo, 
+#projects {
   margin-left: 5%;
   margin-right: 5%; 
   padding-left: 5%; 
@@ -46,7 +49,8 @@
   margin-left: 10%;
 }
 
-#navbar, #footer {
+#navbar, 
+#footer {
   background-color: #047fbd; 
   display: inline-flex; 
   width: 100%; 
@@ -102,7 +106,11 @@
   opacity: 1; 
 }
 
-.h1, .h2, .h3, .li, .p {
+.h1, 
+.h2, 
+.h3, 
+.li, 
+.p {
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 
@@ -114,7 +122,9 @@
   font-size: 30px;
 }
 
-.h3, .li, .p {
+.h3, 
+.li, 
+.p {
   font-size: 25px;
 }
 
@@ -128,7 +138,12 @@
   padding-bottom: 3%; 
 }
 
-#projectNlp, #projectTa, #projectHelmet, #projectDescriptionNlp, #projectDescriptionTa, #projectDescriptionHelmet { 
+#projectNlp, 
+#projectTa, 
+#projectHelmet, 
+#projectDescriptionNlp, 
+#projectDescriptionTa, 
+#projectDescriptionHelmet { 
   min-height: 100px;
   padding-left: 3%;
   padding-right: 3%; 
@@ -137,7 +152,9 @@
   width: 350px;
 }
 
-#projectDescriptionNlp, #projectDescriptionTa, #projectDescriptionHelmet {
+#projectDescriptionNlp, 
+#projectDescriptionTa, 
+#projectDescriptionHelmet {
   font-size: 15px; 
   font-family: 'Trebuchet MS', Arial, sans-serif;
 }
