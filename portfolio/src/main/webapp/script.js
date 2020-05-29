@@ -19,10 +19,10 @@
 function addHobby() {
   var hobbies = 'playing the Clarinet, reading mystery novels, (trying to) speak Spanish';
   
-  const hobbyContainer = document.getElementById('hobby-container');
+  const hobbyContainer = document.getElementById('hobbyContainer');
   hobbyContainer.innerText = hobbies;
   
-  const hobbyWrapper = document.getElementById('hobby-wrapper');
+  const hobbyWrapper = document.getElementById('hobbyWrapper');
   hobbyWrapper.style.backgroundColor = 'antiquewhite';
 }
 
@@ -37,16 +37,16 @@ function addHobby() {
 function addProjectDescription(project) {
   
   const details = {
-    nlp: 'Building language models',
-    ta: 'Held weekly office hours and review sessions for introductory Data Structure and Algorithms class',
-    helmet: 'Integrated speech command to a \"smart\" bike helmet built by a team of 9 friends',
+    Nlp: 'Building language models',
+    Ta: 'Held weekly office hours and review sessions for introductory Data Structure and Algorithms class',
+    Helmet: 'Integrated speech command to a \"smart\" bike helmet built by a team of 9 friends',
     unknown: 'Something is wrong, project doesn\'t exist'
   };
   
   const colors = {
-    nlp: '#6ccfe0',
-    ta: '#f7d36f',
-    helmet: '#e0b9f0',
+    Nlp: '#6ccfe0',
+    Ta: '#f7d36f',
+    Helmet: '#e0b9f0',
     unknown: 'black'
   };
   
@@ -54,7 +54,7 @@ function addProjectDescription(project) {
     project = 'unknown'; 
   };
   
-  const wrapperName = 'project-description-';
+  const wrapperName = 'projectDescription';
   const wrapper = document.getElementById(wrapperName.concat(project));
   
   wrapper.innerText = details[project]; 
@@ -74,10 +74,18 @@ function highlightSection(select) {
 
   var navbarSections = document.getElementsByClassName('navbarSection');
 
-  for (var i = 0; i < navbarSections.length; i++) {
-    var currSection = navbarSections[i];
-    if (currSection.id !== select) {
-      currSection.style.border = 'none'; 
+  // navbarSections.forEach (
+  //   (section) => {
+  //     if (section.id !== select) {
+  //       console.log(section.id);
+  //       section.style.border = 'none'; 
+  //     }
+  //   }); 
+  
+  for (section of navbarSections) {
+    if (section.id !== select) {
+      section.style.border = 'none'; 
     }
   }
+
 }
