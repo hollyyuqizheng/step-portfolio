@@ -17,7 +17,7 @@
  * and updating the wrapper's background color so that it appears 
  */
 function addHobby() {
-  let hobbies = 'playing the Clarinet, reading mystery novels, (trying to) speak Spanish';
+  const hobbies = 'playing the Clarinet, reading mystery novels, (trying to) speak Spanish';
   
   const hobbyContainer = document.getElementById('hobbyContainer');
   hobbyContainer.innerText = hobbies;
@@ -37,7 +37,7 @@ function addHobby() {
  */
 function addProjectDescription(project) {
   
-  let projectName = project.toUpperCase(); 
+  const projectName = project.toUpperCase(); 
 
   const projectNameToData = {
     NLP: createProjectData('Building language models', '#6ccfe0'),
@@ -83,11 +83,11 @@ function highlightSection(selectedIdString) {
   document.getElementById(selectedIdString).style.border = 'solid';
   document.getElementById(selectedIdString).style.borderColor = '#c5cf0a';
 
-  let navbarSections = document.getElementsByClassName('navbarSection');
+  const navbarSections = document.getElementsByClassName('navbarSection');
 
   Object.keys(navbarSections).forEach(
     (key) => {
-      var section = navbarSections[key];
+      const section = navbarSections[key];
       if (section.id !== selectedIdString) {
         section.style.border = 'none'; 
       }
