@@ -3,62 +3,114 @@
     display: grid;
     grid-template-columns: 40% auto;
     grid-column-gap: 5%; 
+    padding-bottom: 3%;
+  }
+
+  #navbar, 
+  #footer {
+    grid-column-start: 1;
+    grid-column-end: span 2;
+    min-height: 5%; 
+    padding-right: 40%; 
+  }
+
+  #navbar {
+    grid-row-start: 1; 
+  }
+
+  #footer {
+    grid-row-start: 3; 
   }
 
   #introduction {
     grid-column-start: 1;
+    grid-row-start: 2; 
   }
 
   #rightColumn {
     grid-column-start: 2; 
+    grid-row-start: 2; 
   }
 } 
 
-#introduction, #basicInfo, #projects {
-  margin-left: 10%;
-  margin-right: 10%; 
-  padding-left: 10%; 
+#introduction, 
+#basicInfo, 
+#projects {
+  margin-left: 5%;
+  margin-right: 5%; 
+  padding-left: 5%; 
   padding-right: 5%; 
-  max-width: 60%;
+  max-width: 80%;  
 }
 
-#hobby-wrapper {
+#introduction {
+  margin-right: 10%; 
+  margin-left: 10%;
+}
+
+#navbar, 
+#footer {
+  background-color: #047fbd; 
+  display: inline-flex; 
+  padding-left: 10%;
+  width: 100%; 
+}
+
+#footer {
+  color: aliceblue; 
+}
+
+.navButton {
+  background-color: antiquewhite;
+  color: black; 
+  font: 20pt; 
+  max-width: 100px;
+  min-width: 80px; 
+  margin: 5%; 
+  padding: 5px;
+}
+
+#hobbyWrapper {
+  height: 100px;
   margin-top: 1%;
   max-width: 150px;
-  height: 100px;
   padding: 2%; 
 }
 
 #headshotWrapper {
-  position: relative; 
   min-width: 500px;
-  max-width: 600px; 
+  max-width: 600px;
+  position: relative;
 }
 
-#headshot {
-  display: block;
+.headshot {
+  display: block; 
   min-width: 500px;
   max-width: 600px; 
 }
 
 #caption {
-  position: absolute; 
-  bottom: 0;
-  width: 100%;
   background: rgba(0, 0, 0, 0.5);
   color: white; 
-  transition: .4s ease;
-  opacity:0;
+  bottom: 0; 
   font-size: 20px;
+  opacity:0;
   padding: 10px;
+  position: absolute; 
   text-align: center;
+  transition: .4s ease;
+  width: 100%;
 }
 
 #headshotWrapper:hover #caption {
   opacity: 1; 
 }
 
-.h1, .h2, .h3, .li, .p {
+.h1, 
+.h2, 
+.h3, 
+.li, 
+.p {
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 
@@ -70,67 +122,69 @@
   font-size: 30px;
 }
 
-.h3, .li, .p {
+.h3, 
+.li, 
+.p {
   font-size: 25px;
 }
 
-
-#project-wrapper {
-  margin-right: 20%; 
+#projectWrapper {
   display: grid;
   grid-template-columns: auto auto ; 
   grid-column-gap: 3%;
   grid-row-gap: 0; 
+  margin-right: 20%; 
   padding-top: 2%;
   padding-bottom: 3%; 
 }
 
-
-
-#project-nlp, #project-ta, #project-helmet, #project-description-nlp, #project-description-ta, #project-description-helmet {
-  width: 350px;
+#projectNlp, 
+#projectTa, 
+#projectHelmet, 
+#projectDescriptionNlp, 
+#projectDescriptionTa, 
+#projectDescriptionHelmet { 
   min-height: 100px;
-  padding-left: 3%;
-  padding-right: 3%; 
-  padding-top: 3%;
-  padding-bottom: 3%; 
+  padding: 3%; 
+  width: 350px;
 }
 
-#project-description-nlp, #project-description-ta, #project-description-helmet {
+#projectDescriptionNlp, 
+#projectDescriptionTa, 
+#projectDescriptionHelmet {
   font-size: 15px; 
   font-family: 'Trebuchet MS', Arial, sans-serif;
 }
 
-
-#project-nlp {
+#projectNlp {
   background-color: #6ccfe0;
   grid-column-start: 1;
   grid-row-start: 1;
 }
 
-#project-description-nlp {
+#projectDescriptionNlp {
   grid-column-start: 2;
   grid-row-start: 1;
 }
 
-#project-ta {
+#projectTa {
   background-color: #f7d36f;
   grid-column-start: 2;
   grid-row-start: 2;
 }
 
-#project-description-ta {
+#projectDescriptionTa {
   grid-column-start: 1;
   grid-row-start: 2;
 }
 
-#project-helmet {
+#projectHelmet {
   background-color: #e0b9f0;
   grid-column-start: 1;
   grid-row-start: 3;
 }
 
-#project-description-helmet {
+#projectDescriptionHelmet {
   grid-column-start: 2;
   grid-row-start: 3;
 }

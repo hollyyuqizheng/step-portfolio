@@ -12,19 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
-
 /**
  * Adds a list of hobbies to the page by displaying the hobby's description text
  * and updating the wrapper's background color so that it appears 
  */
 function addHobby() {
-  var hobbies = 'playing the Clarinet, reading mystery novels, (trying to) speak Spanish';
+  const hobbies = 'playing the Clarinet, reading mystery novels, (trying to) speak Spanish';
   
-  const hobbyContainer = document.getElementById('hobby-container');
+  const hobbyContainer = document.getElementById('hobbyContainer');
   hobbyContainer.innerText = hobbies;
   
-  const hobbyWrapper = document.getElementById('hobby-wrapper');
+  const hobbyWrapper = document.getElementById('hobbyWrapper');
   hobbyWrapper.style.backgroundColor = 'antiquewhite';
 }
 
@@ -39,27 +37,59 @@ function addHobby() {
  */
 function addProjectDescription(project) {
   
-  const details = {
-    nlp: 'Building language models',
-    ta: 'Held weekly office hours and review sessions for introductory Data Structure and Algorithms class',
-    helmet: 'Integrated speech command to a \"smart\" bike helmet built by a team of 9 friends',
-    unknown: 'Something is wrong, project doesn\'t exist'
+  const projectName = project.toUpperCase(); 
+
+  const projectNameToData = {
+    NLP: createProjectData('Building language models', '#6ccfe0'),
+    TA: createProjectData('Held weekly office hours and review sessions for introductory Data Structure and Algorithms class', '#f7d36f'),
+    HELMET: createProjectData('Integrated speech command to a \"smart\" bike helmet built by a team of 9 friends', '#e0b9f0'),
+    UNKNOWN: createProjectData('Something is wrong, project doesn\'t exist', 'black')
+  }
+  
+  if (!(projectName in projectNameToData)) {
+    projectName = 'UNKNOWN'; 
   };
   
-  const colors = {
-    nlp: '#6ccfe0',
-    ta: '#f7d36f',
-    helmet: '#e0b9f0',
-    unknown: 'black'
-  };
-  
-  if (!(project in details)) {
-    project = 'unknown'; 
-  };
-  
-  const wrapperName = 'project-description-';
+  const wrapperName = 'projectDescription';
   const wrapper = document.getElementById(wrapperName.concat(project));
   
-  wrapper.innerText = details[project]; 
-  wrapper.style.backgroundColor = colors[project];
+  wrapper.innerText = projectNameToData[projectName]['projectDetail']; 
+  wrapper.style.backgroundColor = projectNameToData[projectName]['backgroundColor']; 
+}
+
+
+/**
+ * This is the helper function for addProjectDescription.
+ * This function creates a data key-value pair object for each project.
+ * Input: 
+ */
+function createProjectData(projectDetail, backgroundColor) {
+ 
+  projectData = {}
+  projectData['projectDetail'] = projectDetail;
+  projectData['backgroundColor'] = backgroundColor; 
+
+  return projectData; 
+}
+
+/**
+ * This function enables the highlighting of a selected section from the navigation bar. 
+ * This function is called by the clicking of any one of the boxes in the navigation bar.
+ * Input: section to select
+ * Effect: selected section will have their border shown, and all the other sections will not have the border. 
+ */
+function highlightSection(selectedIdString) {
+
+  document.getElementById(selectedIdString).style.border = 'solid';
+  document.getElementById(selectedIdString).style.borderColor = '#c5cf0a';
+
+  const navbarSections = document.getElementsByClassName('navbarSection');
+
+  Object.keys(navbarSections).forEach(
+    (key) => {
+      const section = navbarSections[key];
+      if (section.id !== selectedIdString) {
+        section.style.border = 'none'; 
+      }
+    }); 
 }
