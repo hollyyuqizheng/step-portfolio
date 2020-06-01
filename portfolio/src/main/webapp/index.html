@@ -13,12 +13,12 @@
         <div class="navButton" onClick="highlightSection('hobbyWrapper')">Hobbies</div> 
         <div class="navButton" onClick="highlightSection('projects')">Projects</div> 
       </div> 
-
+      
       <div id="introduction">
         <h1>Hi there!</h1>
         <div id="headshotWrapper">
-          <img class="headshot" id="image" src="city.jpg" alt="skyline of Beijing"/>
-          <div id="caption">My name is Holly, and this is a small place on the Internet that has my portfolio.</div> 
+          <img class="headshot" src="city.jpg" alt="Skyline of Beijing"/>
+          <div id="headshotCaption">My name is Holly, and this is a small place on the Internet that has my portfolio.</div> 
         </div>   
 
         <p>Click here to see some of my hobbies:</p>
@@ -38,18 +38,20 @@
             <li>Find me on<a href="https://linkedin.com/in/hollyyuqizheng" target="_blank"> LinkedIn</a> 
                 and<a href="https://github.com/hollyyuqizheng" target="_blank"> GitHub</a></li> 
           </ul> 
+          <h2 onClick="getQuotes()">(Click me) Some of my favorite quotes from books</h2>
+          <ul id="quoteWrapper"></ul>
         </div> 
       
         <div id="projects" class="navbarSection">
           <h2>What I have been working on</h2> 
           <h3>(Click on each project to see more details!)</h3> 
           <div id="projectWrapper">
-            <div id="projectNlp" onClick="addProjectDescription('Nlp')"> 
+            <div id="projectNlp" onClick="addProjectDescription('NLP')"> 
               <h3>Natural Language Processing research</h3>
             </div> 
             <div id="projectDescriptionNlp"></div>
 
-            <div id="projectTa" onClick="addProjectDescription('Ta')"> 
+            <div id="projectTa" onClick="addProjectDescription('TA')"> 
               <h3>Teaching Assistant for Introductory CS course</h3>
             </div>
             <div id="projectDescriptionTa"></div>
@@ -63,7 +65,7 @@
       </div>
 
       <div id="footer">
-        <p>Designed for STEP week 2 project. Holly Zheng. 2020.</p> 
+        <p>Designed for STEP weeks 2&3 project. Holly Zheng. 2020.</p> 
       </div>
 
     </div>    

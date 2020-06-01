@@ -26,7 +26,6 @@ function addHobby() {
   hobbyWrapper.style.backgroundColor = 'antiquewhite';
 }
 
-
 /**
  * This function is called when any of the project box is clicked.
  * Input: string -- name of the selected project
@@ -36,14 +35,21 @@ function addHobby() {
  * - If the project doesn't exist, a general "something is wrong" is displayed in the description box 
  */
 function addProjectDescription(project) {
-  
   const projectName = project.toUpperCase(); 
 
   const projectNameToData = {
-    NLP: createProjectData('Building language models', '#6ccfe0'),
-    TA: createProjectData('Held weekly office hours and review sessions for introductory Data Structure and Algorithms class', '#f7d36f'),
-    HELMET: createProjectData('Integrated speech command to a \"smart\" bike helmet built by a team of 9 friends', '#e0b9f0'),
-    UNKNOWN: createProjectData('Something is wrong, project doesn\'t exist', 'black')
+    NLP: createProjectData(
+      'Building language models', 
+      '#6ccfe0'),
+    TA: createProjectData(
+      'Held weekly office hours and review sessions for introductory Data Structure and Algorithms class', 
+      '#f7d36f'),
+    HELMET: createProjectData(
+      'Integrated speech command to a \"smart\" bike helmet built by a team of 9 friends', 
+      '#e0b9f0'),
+    UNKNOWN: createProjectData(
+      'Something is wrong, project doesn\'t exist', 
+      'black')
   }
   
   if (!(projectName in projectNameToData)) {
@@ -57,14 +63,12 @@ function addProjectDescription(project) {
   wrapper.style.backgroundColor = projectNameToData[projectName]['backgroundColor']; 
 }
 
-
 /**
  * This is the helper function for addProjectDescription.
  * This function creates a data key-value pair object for each project.
  * Input: 
  */
 function createProjectData(projectDetail, backgroundColor) {
- 
   projectData = {}
   projectData['projectDetail'] = projectDetail;
   projectData['backgroundColor'] = backgroundColor; 
@@ -79,7 +83,6 @@ function createProjectData(projectDetail, backgroundColor) {
  * Effect: selected section will have their border shown, and all the other sections will not have the border. 
  */
 function highlightSection(selectedIdString) {
-
   document.getElementById(selectedIdString).style.border = 'solid';
   document.getElementById(selectedIdString).style.borderColor = '#c5cf0a';
 
@@ -92,4 +95,35 @@ function highlightSection(selectedIdString) {
         section.style.border = 'none'; 
       }
     }); 
+}
+
+/**
+ * This function sends a request to the /data url and fetches the text from there.
+ * Then, the function puts the received text into the quoteWrapper, which is located 
+ * below the bulletin points on the page. 
+ */
+function getQuotes() {
+  fetch('/data')
+      .then(response => response.json())
+      .then((quotesJson) => {
+        const quoteWrapper = document.getElementById('quoteWrapper');
+        quoteWrapper.innerHTML = '';
+
+        Object.keys(quotesJson).forEach(
+          (key) => {
+            const quote = quotesJson[key];
+            quoteWrapper.appendChild(createQuotesListElement(quote)); 
+          });        
+      });
+}
+
+/**
+ * This is a helper function, called inside getQuotes. 
+ * This function creates a li element that contains each individual quote;
+ * this li element will be added to the Quotes section in the HTML file.  
+ */
+function createQuotesListElement(quote){
+  const liElement = document.createElement('li');
+  liElement.innerText = quote;
+  return liElement;
 }

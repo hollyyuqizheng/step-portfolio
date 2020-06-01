@@ -20,13 +20,43 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet that returns some example content. TODO: modify this file to handle comments data */
+import java.util.ArrayList;
+import com.google.gson.Gson;
+
+/** Servlet that returns some example content. */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+      
+    ArrayList<String> quotes = createQuotesArray();
+    String quotesJson = convertToJson(quotes);
+
     response.setContentType("text/html;");
-    response.getWriter().println("<h1>Hello world!</h1>");
+    response.getWriter().println(quotesJson);
+  } 
+
+  /**
+   * This function creates an ArrayList containing a few hard-coded quotes. 
+   */ 
+  private ArrayList createQuotesArray() {
+    ArrayList<String> quotes = new ArrayList<String>();
+    quotes.add("It's all now you see. Yesterday won't be over until tomorrow and tomorrow began ten thousand years ago. -- William Faulkner");
+    quotes.add("Very long quote number 2");
+    quotes.add("Even longer quote number 3"); 
+    return quotes; 
+  }
+
+  /**
+   * This function takes in an ArrayList of quotes and converts it into a string 
+   * that is in JSON format
+   * Input type: ArrayList<String>
+   * Output type: String 
+   */ 
+  private String convertToJson(ArrayList<String> quotes){
+    Gson gson = new Gson();
+    String json = gson.toJson(quotes);
+    return json;
   }
 }

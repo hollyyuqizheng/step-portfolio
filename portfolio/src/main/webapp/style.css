@@ -34,7 +34,7 @@
 } 
 
 #introduction, 
-#basicInfo, 
+#basicInfo,
 #projects {
   margin-left: 5%;
   margin-right: 5%; 
@@ -73,7 +73,7 @@
 #hobbyWrapper {
   height: 100px;
   margin-top: 1%;
-  max-width: 150px;
+  max-width: 300px;
   padding: 2%; 
 }
 
@@ -89,7 +89,7 @@
   max-width: 600px; 
 }
 
-#caption {
+#headshotCaption {
   background: rgba(0, 0, 0, 0.5);
   color: white; 
   bottom: 0; 
@@ -102,7 +102,7 @@
   width: 100%;
 }
 
-#headshotWrapper:hover #caption {
+#headshotWrapper:hover #headshotCaption {
   opacity: 1; 
 }
 
