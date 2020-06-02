@@ -72,7 +72,6 @@ function createProjectData(projectDetail, backgroundColor) {
   projectData = {}
   projectData['projectDetail'] = projectDetail;
   projectData['backgroundColor'] = backgroundColor; 
-
   return projectData; 
 }
 
