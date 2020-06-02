@@ -19,9 +19,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.ArrayList;
-import com.google.gson.Gson;
 
 /** Servlet that returns some example content. */
 @WebServlet("/data")
@@ -29,7 +27,6 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-      
     ArrayList<String> quotes = createQuotesArray();
     String quotesJson = convertToJson(quotes);
 
@@ -42,21 +39,26 @@ public class DataServlet extends HttpServlet {
    */ 
   private ArrayList createQuotesArray() {
     ArrayList<String> quotes = new ArrayList<String>();
-    quotes.add("It's all now you see. Yesterday won't be over until tomorrow and tomorrow began ten thousand years ago. -- William Faulkner");
-    quotes.add("Very long quote number 2");
-    quotes.add("Even longer quote number 3"); 
+    quotes.add("It's all now you see. Yesterday won't be over until tomorrow and tomorrow began ten thousand years ago.");
+    quotes.add("To imagine -- to dream about things that have not happened -- is among mankind's deepest needs.");
     return quotes; 
   }
 
   /**
    * This function takes in an ArrayList of quotes and converts it into a string 
-   * that is in JSON format
+   * that is in JSON format. 
+   * Right now, this conversion is hard-coded. 
    * Input type: ArrayList<String>
    * Output type: String 
    */ 
-  private String convertToJson(ArrayList<String> quotes){
-    Gson gson = new Gson();
-    String json = gson.toJson(quotes);
+  private String convertToJson(ArrayList<String> quotes){  
+    String json = "{";
+    json += "\"1\": ";
+    json += "\"" + quotes.get(0) + "\"";
+    json += ", ";
+    json += "\"2\": ";
+    json += "\"" + quotes.get(1) + "\"";
+    json += "}";
     return json;
   }
 }

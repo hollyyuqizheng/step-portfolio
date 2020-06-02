@@ -138,42 +138,42 @@
   padding-bottom: 3%; 
 }
 
-#projectNlp, 
-#projectTa, 
+#projectNLP, 
+#projectTA, 
 #projectHelmet, 
-#projectDescriptionNlp, 
-#projectDescriptionTa, 
+#projectDescriptionNLP, 
+#projectDescriptionTA, 
 #projectDescriptionHelmet { 
   min-height: 100px;
   padding: 3%; 
   width: 350px;
 }
 
-#projectDescriptionNlp, 
-#projectDescriptionTa, 
+#projectDescriptionNLP, 
+#projectDescriptionTA, 
 #projectDescriptionHelmet {
   font-size: 15px; 
   font-family: 'Trebuchet MS', Arial, sans-serif;
 }
 
-#projectNlp {
+#projectNLP {
   background-color: #6ccfe0;
   grid-column-start: 1;
   grid-row-start: 1;
 }
 
-#projectDescriptionNlp {
+#projectDescriptionNLP {
   grid-column-start: 2;
   grid-row-start: 1;
 }
 
-#projectTa {
+#projectTA {
   background-color: #f7d36f;
   grid-column-start: 2;
   grid-row-start: 2;
 }
 
-#projectDescriptionTa {
+#projectDescriptionTA {
   grid-column-start: 1;
   grid-row-start: 2;
 }
