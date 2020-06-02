@@ -18,8 +18,14 @@
     grid-row-start: 1; 
   }
 
+  #surveyWrapper {
+    grid-column-start: 1;
+    grid-column-end: span 2;
+    grid-row-start: 3;
+  }
+
   #footer {
-    grid-row-start: 3; 
+    grid-row-start: 4; 
   }
 
   #introduction {
@@ -46,6 +52,12 @@
 #introduction {
   margin-right: 10%; 
   margin-left: 10%;
+}
+
+#surveyWrapper {
+  background-color: yellow; 
+  padding: 10%; 
+  width: 100%;
 }
 
 #navbar, 
@@ -138,42 +150,42 @@
   padding-bottom: 3%; 
 }
 
-#projectNLP, 
-#projectTA, 
+#projectNlp, 
+#projectTa, 
 #projectHelmet, 
-#projectDescriptionNLP, 
-#projectDescriptionTA, 
+#projectDescriptionNlp, 
+#projectDescriptionTa, 
 #projectDescriptionHelmet { 
   min-height: 100px;
   padding: 3%; 
   width: 350px;
 }
 
-#projectDescriptionNLP, 
-#projectDescriptionTA, 
+#projectDescriptionNlp, 
+#projectDescriptionTa, 
 #projectDescriptionHelmet {
   font-size: 15px; 
   font-family: 'Trebuchet MS', Arial, sans-serif;
 }
 
-#projectNLP {
+#projectNlp {
   background-color: #6ccfe0;
   grid-column-start: 1;
   grid-row-start: 1;
 }
 
-#projectDescriptionNLP {
+#projectDescriptionNlp {
   grid-column-start: 2;
   grid-row-start: 1;
 }
 
-#projectTA {
+#projectTa {
   background-color: #f7d36f;
   grid-column-start: 2;
   grid-row-start: 2;
 }
 
-#projectDescriptionTA {
+#projectDescriptionTa {
   grid-column-start: 1;
   grid-row-start: 2;
 }

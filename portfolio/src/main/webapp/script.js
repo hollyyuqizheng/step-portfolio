@@ -87,9 +87,8 @@ function highlightSection(selectedIdString) {
 
   const navbarSections = document.getElementsByClassName('navbarSection');
 
-  Object.keys(navbarSections).forEach(
-    (key) => {
-      const section = navbarSections[key];
+  Object.values(navbarSections).forEach(
+    (section) => {
       if (section.id !== selectedIdString) {
         section.style.border = 'none'; 
       }
@@ -97,9 +96,8 @@ function highlightSection(selectedIdString) {
 }
 
 /**
- * This function sends a request to the /data url and fetches the text from there.
- * Then, the function puts the received text into the quoteWrapper, which is located 
- * below the bulletin points on the page. 
+ * This function fetches the text from /data.
+ * Then, the function puts the received text into the quoteWrapper. 
  */
 function getQuotes() {
   fetch('/data')
@@ -108,9 +106,8 @@ function getQuotes() {
         const quoteWrapper = document.getElementById('quoteWrapper');
         quoteWrapper.innerHTML = '';
 
-        Object.keys(quotesJson).forEach(
-          (key) => {
-            const quote = quotesJson[key];
+        Object.values(quotesJson).forEach(
+          (quote) => {
             quoteWrapper.appendChild(createQuotesListElement(quote)); 
           });        
       });
@@ -121,7 +118,7 @@ function getQuotes() {
  * This function creates a li element that contains each individual quote;
  * this li element will be added to the Quotes section in the HTML file.  
  */
-function createQuotesListElement(quote){
+function createQuotesListElement(quote) {
   const liElement = document.createElement('li');
   liElement.innerText = quote;
   return liElement;

@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body>
+  <body onload="getQuotes()">
     <div id="pageWrapper">
       <div id="navbar">
         <div class="navButton" onClick="highlightSection('basicInfo')">Introduction</div> 
@@ -37,23 +37,21 @@
             <li>Find me on<a href="https://linkedin.com/in/hollyyuqizheng" target="_blank"> LinkedIn</a> 
                 and<a href="https://github.com/hollyyuqizheng" target="_blank"> GitHub</a></li> 
           </ul> 
-          <h2 onClick="getQuotes()">(Click me) Some of my favorite quotes from books</h2>
-          <ul id="quoteWrapper"></ul>
         </div> 
       
         <div id="projects" class="navbarSection">
           <h2>What I have been working on</h2> 
           <h3>(Click on each project to see more details!)</h3> 
           <div id="projectWrapper">
-            <div id="projectNLP" onClick="addProjectDescription('NLP')"> 
+            <div id="projectNlp" onClick="addProjectDescription('Nlp')"> 
               <h3>Natural Language Processing research</h3>
             </div> 
-            <div id="projectDescriptionNLP"></div>
+            <div id="projectDescriptionNlp"></div>
 
-            <div id="projectTA" onClick="addProjectDescription('TA')"> 
+            <div id="projectTa" onClick="addProjectDescription('Ta')"> 
               <h3>Teaching Assistant for Introductory CS course</h3>
             </div>
-            <div id="projectDescriptionTA"></div>
+            <div id="projectDescriptionTa"></div>
           
             <div id="projectHelmet" onClick="addProjectDescription('Helmet')"> 
               <h3>Multifunctional bike helmet</h3>         
@@ -62,6 +60,17 @@
           </div>
         </div>
       </div>
+
+      <div id="surveyWrapper">
+        <h2>I'm always down to chat!</h2> 
+        <form action="/data" method="POST">
+          <p>Please tell me one of your favorite quotes from books or movies:</p>
+          <input type="text" name="quote">
+          <input type="submit" />
+          <p>The quotes you have entered will be posted here:</p> 
+          <ul id="quoteWrapper"></ul> 
+        </form>
+      </div> 
 
       <div id="footer">
         <p>Designed for STEP weeks 2&3 project. Holly Zheng. 2020.</p> 

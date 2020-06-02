@@ -19,49 +19,62 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import com.google.gson.Gson;
+import java.util.List; 
+import java.util.ArrayList; 
 
 /** Servlet that returns some example content. */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
+  //This global variable will hold all quotes that the user has inputed through the survey bar. 
+  List<String> quoteList = new ArrayList<String> ();
+
+  /**
+   * This method converts the quoteList into JSON format and print that as the server's response. 
+   */ 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    ArrayList<String> quotes = createQuotesArray();
-    String quotesJson = convertToJson(quotes);
-
+    String quotesJson = convertToJson(quoteList);
     response.setContentType("text/html;");
     response.getWriter().println(quotesJson);
   } 
 
   /**
-   * This function creates an ArrayList containing a few hard-coded quotes. 
+   * In this method, a new quote entered by the user is added to quoteList.
+   * Then, this method redirects the page back to itself, which reloads the page. 
    */ 
-  private ArrayList createQuotesArray() {
-    ArrayList<String> quotes = new ArrayList<String>();
-    quotes.add("It's all now you see. Yesterday won't be over until tomorrow and tomorrow began ten thousand years ago.");
-    quotes.add("To imagine -- to dream about things that have not happened -- is among mankind's deepest needs.");
-    return quotes; 
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    String quote = getParameter(request, "quote", ""); 
+    quoteList.add(quote);
+
+    response.sendRedirect("/index.html");
+  }
+
+  /**
+   * This method handles the returning of request parameter 
+   * @param request: the request from the survey
+            name: the request parameter, which corresponds to a specific entry of the survey
+            defaultValue: a default value for this survey entry's input
+   * @return the request parameter, or the default value if the parameter
+   *         was not specified by the client
+   */ 
+  private String getParameter(HttpServletRequest request, String name, String defaultValue) {
+    String value = request.getParameter(name);
+    if (value == null) {
+      return defaultValue;
+    }
+    return value;
   }
 
   /**
    * This function takes in an ArrayList of quotes and converts it into a string 
    * that is in JSON format. 
-   * Right now, this conversion is hard-coded. 
-   * Input type: ArrayList<String>
-   * Output type: String 
+   * @param a list of quotes
+   * @return the quote list formated as a JSON string
    */ 
-  private String convertToJson(ArrayList<String> quotes){  
-    // String json = "{";
-    // json += "\"1\": ";
-    // json += "\"" + quotes.get(0) + "\"";
-    // json += ", ";
-    // json += "\"2\": ";
-    // json += "\"" + quotes.get(1) + "\"";
-    // json += "}";
-    // return json;
-
+  private String convertToJson(List<String> quotes) {  
     Gson gson = new Gson();
     String json = gson.toJson(quotes);
     return json;
