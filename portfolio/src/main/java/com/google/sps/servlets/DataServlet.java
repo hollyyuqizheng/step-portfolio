@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import com.google.gson.Gson;
 
 /** Servlet that returns some example content. */
 @WebServlet("/data")
@@ -52,13 +53,17 @@ public class DataServlet extends HttpServlet {
    * Output type: String 
    */ 
   private String convertToJson(ArrayList<String> quotes){  
-    String json = "{";
-    json += "\"1\": ";
-    json += "\"" + quotes.get(0) + "\"";
-    json += ", ";
-    json += "\"2\": ";
-    json += "\"" + quotes.get(1) + "\"";
-    json += "}";
+    // String json = "{";
+    // json += "\"1\": ";
+    // json += "\"" + quotes.get(0) + "\"";
+    // json += ", ";
+    // json += "\"2\": ";
+    // json += "\"" + quotes.get(1) + "\"";
+    // json += "}";
+    // return json;
+
+    Gson gson = new Gson();
+    String json = gson.toJson(quotes);
     return json;
   }
 }
