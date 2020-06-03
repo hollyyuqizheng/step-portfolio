@@ -132,7 +132,7 @@ function cleanData() {
   fetch('/deleteQuote', {method: 'POST'})
     .then(() => {
       refreshQuotes(); 
-  });
+    });
 }
 
 /**

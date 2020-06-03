@@ -18,16 +18,6 @@
     grid-row-start: 1; 
   }
 
-  #surveyWrapper {
-    grid-column-start: 1;
-    grid-column-end: span 2;
-    grid-row-start: 3;
-  }
-
-  #footer {
-    grid-row-start: 4; 
-  }
-
   #introduction {
     grid-column-start: 1;
     grid-row-start: 2; 
@@ -36,6 +26,20 @@
   #rightColumn {
     grid-column-start: 2; 
     grid-row-start: 2; 
+  }
+
+  #surveyWrapper {
+    grid-column-start: 1;
+    grid-row-start: 3;
+  }
+
+  #loginWrapper {
+    grid-column-start: 2;
+    grid-row-start:3; 
+  }
+
+  #footer {
+    grid-row-start: 4; 
   }
 } 
 
@@ -53,7 +57,6 @@
   margin-right: 10%; 
   margin-left: 10%;
 }
-
 
 #navbar, 
 #footer {
@@ -116,7 +119,8 @@
 
 .h1, 
 .h2, 
-.h3, 
+.h3,
+.span 
 .li, 
 .p {
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
@@ -126,7 +130,8 @@
   font-size: 35px;
 }
 
-.h2 {
+.h2,
+.span {
   font-size: 30px;
 }
 
@@ -204,6 +209,11 @@
 }
 
 #quoteWrapper {
-  background-color: antiquewhite; 
   width: 40%; 
+}
+
+#loginWrapper {
+  background-color: antiquewhite; 
+  padding: 10%; 
+  width: 100%;
 }

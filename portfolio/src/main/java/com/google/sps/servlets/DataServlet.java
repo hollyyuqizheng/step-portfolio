@@ -46,8 +46,8 @@ public class DataServlet extends HttpServlet {
     Query query = new Query("Quote").addSort("timestamp", SortDirection.DESCENDING);
     PreparedQuery quotes = datastore.prepare(query);
 
-    //Add each quote to the quote list whose content will be written as 
-    //the response from the servlet 
+    // Add each quote to the quote list whose content will be written as 
+    // the response from the servlet. 
     List<String> quoteList = new ArrayList<>();
     int quoteCount = 1; 
     for (Entity quoteEntity : quotes.asIterable()) {
@@ -56,7 +56,7 @@ public class DataServlet extends HttpServlet {
       }
       String quoteText = (String) quoteEntity.getProperty("text");
       quoteList.add(quoteText);
-      quoteCount ++; 
+      quoteCount++; 
     }
 
     String quotesJson = convertToJson(quoteList);
@@ -71,25 +71,28 @@ public class DataServlet extends HttpServlet {
    */ 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-    //Update the global variable numQuoteToDisplay 
+    // Update the global variable numQuoteToDisplay. 
     numQuoteToDisplay = getNumQuoteDispalyed(request);
      
-    String quote = getParameter(request, "quote", ""); 
-    long timestamp = System.currentTimeMillis();
+    String quote = request.getParameter("quote"); 
 
-    Entity quoteEntity = new Entity("Quote");
-    quoteEntity.setProperty("text", quote);
-    quoteEntity.setProperty("timestamp", timestamp);
+    // Only update the new quote if it is not an empty string. 
+    if (quote.length() > 0) {
+      long timestamp = System.currentTimeMillis();
 
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    datastore.put(quoteEntity);
+      Entity quoteEntity = new Entity("Quote");
+      quoteEntity.setProperty("text", quote);
+      quoteEntity.setProperty("timestamp", timestamp);
 
+      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+      datastore.put(quoteEntity);
+    }
+    
     response.sendRedirect("/index.html");
   }
 
   /**
-   * This method handles the returning of request parameter 
+   * This method handles the returning of request parameter. 
    * @param request: the request from the survey
             name: the request parameter, which corresponds to a specific entry of the survey
             defaultValue: a default value for this survey entry's input
@@ -125,14 +128,14 @@ public class DataServlet extends HttpServlet {
     int numDisplay;
     String numQuoteDisplayParam = request.getParameter("numToDisplay");
 
-    //If the number to display entry is empty from the survey bar,
-    //this parameter hasn't been updated by the user, 
-    //so return the global variable numQuoteToDisplay.
+    // If the number to display entry is empty from the survey bar,
+    // this parameter hasn't been updated by the user, 
+    // so return the global variable numQuoteToDisplay.
     if (numQuoteDisplayParam == "" || numQuoteDisplayParam == null) {
       numDisplay = numQuoteToDisplay; 
     } else {
-      //If this entry is not empty from the survey bar,
-      //the user has updated its preference, so update the number.   
+      // If this entry is not empty from the survey bar,
+      // the user has updated its preference, so update the number.   
       try {
         numDisplay = Integer.parseInt(numQuoteDisplayParam);
       } catch (NumberFormatException e) {

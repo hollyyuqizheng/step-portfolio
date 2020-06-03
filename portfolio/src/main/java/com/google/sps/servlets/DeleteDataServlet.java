@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet responsible for deleting all quotes in Datastore */
+/** Servlet responsible for deleting all quotes in Datastore. */
 @WebServlet("/deleteQuote")
 public class DeleteDataServlet extends HttpServlet {
 
