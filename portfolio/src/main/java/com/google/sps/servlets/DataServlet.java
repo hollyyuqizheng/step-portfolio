@@ -19,6 +19,12 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
 import java.util.List; 
 import java.util.ArrayList; 
@@ -27,27 +33,57 @@ import java.util.ArrayList;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-  //This global variable will hold all quotes that the user has inputed through the survey bar. 
-  List<String> quoteList = new ArrayList<String> ();
+  int numQuoteToDisplay = 10;
 
   /**
-   * This method converts the quoteList into JSON format and print that as the server's response. 
-   */ 
+    * This method retrives all quotes that are stored in Datastore
+    * and puts them into a list of quotes. This list is then written
+    * as the response from the server. 
+    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Query query = new Query("Quote").addSort("timestamp", SortDirection.DESCENDING);
+    PreparedQuery quotes = datastore.prepare(query);
+
+    //Add each quote to the quote list whose content will be written as 
+    //the response from the servlet 
+    List<String> quoteList = new ArrayList<>();
+    int quoteCount = 1; 
+    for (Entity quoteEntity : quotes.asIterable()) {
+      if (quoteCount > numQuoteToDisplay) {
+        break; 
+      }
+      String quoteText = (String) quoteEntity.getProperty("text");
+      quoteList.add(quoteText);
+      quoteCount ++; 
+    }
+
     String quotesJson = convertToJson(quoteList);
     response.setContentType("text/html;");
     response.getWriter().println(quotesJson);
-  } 
+  }
 
   /**
-   * In this method, a new quote entered by the user is added to quoteList.
-   * Then, this method redirects the page back to itself, which reloads the page. 
+   * This method receives the quote that the user has inputed in the survey bar.
+   * This new quote is changed into an Entity that is put into Datastore.
+   * Each quote entity has a "text" and a "timstamp" field. 
    */ 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+    //Update the global variable numQuoteToDisplay 
+    numQuoteToDisplay = getNumQuoteDispalyed(request);
+     
     String quote = getParameter(request, "quote", ""); 
-    quoteList.add(quote);
+    long timestamp = System.currentTimeMillis();
+
+    Entity quoteEntity = new Entity("Quote");
+    quoteEntity.setProperty("text", quote);
+    quoteEntity.setProperty("timestamp", timestamp);
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    datastore.put(quoteEntity);
 
     response.sendRedirect("/index.html");
   }
@@ -78,5 +114,31 @@ public class DataServlet extends HttpServlet {
     Gson gson = new Gson();
     String json = gson.toJson(quotes);
     return json;
+  }
+
+  /**
+   * This method reads the numToDisplay parameter that is set by the user from the survey bar. 
+   * @param request: the request; defaultNum: default number to display set in doGet method. 
+   * @return number of quotes to display 
+   */ 
+  private int getNumQuoteDispalyed(HttpServletRequest request) {
+    int numDisplay;
+    String numQuoteDisplayParam = request.getParameter("numToDisplay");
+
+    //If the number to display entry is empty from the survey bar,
+    //this parameter hasn't been updated by the user, 
+    //so return the global variable numQuoteToDisplay.
+    if (numQuoteDisplayParam == "" || numQuoteDisplayParam == null) {
+      numDisplay = numQuoteToDisplay; 
+    } else {
+      //If this entry is not empty from the survey bar,
+      //the user has updated its preference, so update the number.   
+      try {
+        numDisplay = Integer.parseInt(numQuoteDisplayParam);
+      } catch (NumberFormatException e) {
+        numDisplay = numQuoteToDisplay; 
+      }
+    }
+    return numDisplay; 
   }
 }

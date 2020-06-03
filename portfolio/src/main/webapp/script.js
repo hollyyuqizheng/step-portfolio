@@ -65,8 +65,7 @@ function addProjectDescription(project) {
 
 /**
  * This is the helper function for addProjectDescription.
- * This function creates a data key-value pair object for each project.
- * Input: 
+ * This function creates a data key-value pair object for each project. 
  */
 function createProjectData(projectDetail, backgroundColor) {
   projectData = {}
@@ -79,7 +78,8 @@ function createProjectData(projectDetail, backgroundColor) {
  * This function enables the highlighting of a selected section from the navigation bar. 
  * This function is called by the clicking of any one of the boxes in the navigation bar.
  * Input: section to select
- * Effect: selected section will have their border shown, and all the other sections will not have the border. 
+ * Effect: selected section will have their border shown, and all the other sections 
+ *         will not have the border. 
  */
 function highlightSection(selectedIdString) {
   document.getElementById(selectedIdString).style.border = 'solid';
@@ -103,12 +103,12 @@ function getQuotes() {
   fetch('/data')
       .then(response => response.json())
       .then((quotesJson) => {
-        const quoteWrapper = document.getElementById('quoteWrapper');
-        quoteWrapper.innerHTML = '';
+        const quoteListElement = document.getElementById('quoteWrapper');
+        quoteListElement.innerHTML = '';
 
         Object.values(quotesJson).forEach(
           (quote) => {
-            quoteWrapper.appendChild(createQuotesListElement(quote)); 
+            quoteListElement.appendChild(createQuotesListElement(quote)); 
           });        
       });
 }
@@ -122,4 +122,24 @@ function createQuotesListElement(quote) {
   const liElement = document.createElement('li');
   liElement.innerText = quote;
   return liElement;
+}
+
+/**
+ * This function performs a POST request to deleteQuote servlet, which 
+ * handles the deletion of all quotes in Datastore. 
+ */
+function cleanData() {
+  fetch('/deleteQuote', {method: 'POST'})
+    .then(() => {
+      refreshQuotes(); 
+  });
+}
+
+/**
+ * This function handles the visual refreshing of the quote list element 
+ * by setting its content to empty. 
+ */
+function refreshQuotes() {
+  const quoteListElement = document.getElementById('quoteWrapper');
+  quoteListElement.innerHTML = '';
 }

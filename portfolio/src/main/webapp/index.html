@@ -66,10 +66,12 @@
         <form action="/data" method="POST">
           <p>Please tell me one of your favorite quotes from books or movies:</p>
           <input type="text" name="quote">
-          <input type="submit" />
-          <p>The quotes you have entered will be posted here:</p> 
-          <ul id="quoteWrapper"></ul> 
-        </form>
+          <input type="submit" /><br> 
+          <span>The quotes you have entered will be posted here. What is the maximum number of quotes you'd like to see?  
+          <input type="number" name="numToDisplay" min="1" max="20"></span>
+          <ol id="quoteWrapper"></ol>
+        </form>   
+        <button id="refreshQuotesButton" onclick="cleanData()">Delete quotes</button>  
       </div> 
 
       <div id="footer">

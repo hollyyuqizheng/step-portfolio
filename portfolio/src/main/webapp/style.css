@@ -54,11 +54,6 @@
   margin-left: 10%;
 }
 
-#surveyWrapper {
-  background-color: yellow; 
-  padding: 10%; 
-  width: 100%;
-}
 
 #navbar, 
 #footer {
@@ -199,4 +194,15 @@
 #projectDescriptionHelmet {
   grid-column-start: 2;
   grid-row-start: 3;
+}
+
+#surveyWrapper {
+  background-color: yellow; 
+  padding: 10%; 
+  width: 100%;
+}
+
+#quoteWrapper {
+  background-color: antiquewhite; 
+  width: 40%; 
 }
