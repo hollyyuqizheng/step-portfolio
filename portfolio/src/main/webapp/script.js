@@ -127,7 +127,7 @@ function getQuotes() {
  */
 function createQuotesListElement(quote) {
   const liElement = document.createElement('li');
-  liElement.innerText = quote;
+  liElement.innerText = quote.text;
   return liElement;
 }
 

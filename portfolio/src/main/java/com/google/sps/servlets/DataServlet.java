@@ -26,6 +26,7 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
+import com.google.sps.data.Quote; 
 import java.util.List; 
 import java.util.ArrayList; 
 
@@ -49,14 +50,18 @@ public class DataServlet extends HttpServlet {
 
     // Add each quote to the quote list whose content will be written as 
     // the response from the servlet. 
-    List<String> quoteList = new ArrayList<>();
+    List<Quote> quoteList = new ArrayList<>();
     int quoteCount = 1; 
     for (Entity quoteEntity : quotes.asIterable()) {
       if (quoteCount > numQuoteToDisplay) {
         break; 
       }
-      String quoteText = (String) quoteEntity.getProperty("text");
-      quoteList.add(quoteText);
+      long id = quoteEntity.getKey().getId();
+      String text = (String) quoteEntity.getProperty("text");
+      long timestamp = (long) quoteEntity.getProperty("timestamp");
+
+      Quote newQuote = new Quote(id, text, timestamp);
+      quoteList.add(newQuote);
       quoteCount++; 
     }
 
@@ -111,9 +116,9 @@ public class DataServlet extends HttpServlet {
    * @param a list of quotes
    * @return the quote list formated as a JSON string
    */ 
-  private String convertToJson(List<String> quotes) {  
+  private String convertToJson(List<Quote> quoteList) {  
     Gson gson = new Gson();
-    String json = gson.toJson(quotes);
+    String json = gson.toJson(quoteList);
     return json;
   }
 
