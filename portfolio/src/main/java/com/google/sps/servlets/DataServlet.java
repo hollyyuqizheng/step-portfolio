@@ -72,8 +72,8 @@ public class DataServlet extends HttpServlet {
    */ 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {    
-    String quote = request.getParameter("quote"); 
-
+    String quote = request.getParameter("quote");
+    
     // Only update the new quote if it is not an empty string. 
     if (quote.length() > 0) {
       long timestamp = System.currentTimeMillis();
