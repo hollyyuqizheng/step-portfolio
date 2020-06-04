@@ -73,7 +73,7 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {    
     String quote = request.getParameter("quote");
-    
+
     // Only update the new quote if it is not an empty string. 
     if (quote.length() > 0) {
       long timestamp = System.currentTimeMillis();
@@ -88,8 +88,6 @@ public class DataServlet extends HttpServlet {
     
     response.sendRedirect("/index.html");
   }
-
-
 
   /**
    * This method handles the returning of request parameter. 
@@ -106,8 +104,6 @@ public class DataServlet extends HttpServlet {
     }
     return value;
   }
-
-
 
   /**
    * This function takes in an ArrayList of quotes and converts it into a string 
