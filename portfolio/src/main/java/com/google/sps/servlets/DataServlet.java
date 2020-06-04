@@ -25,6 +25,8 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.datastore.FetchOptions; 
+import com.google.appengine.api.datastore.FetchOptions.Builder; 
 import com.google.gson.Gson;
 import com.google.sps.data.Quote; 
 import java.util.List; 
@@ -34,8 +36,13 @@ import java.util.ArrayList;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
+  private static final String QUOTE = "Quote";
+  private static final String TEXT = "text";
+  private static final String TIMESTAMP = "timestamp"; 
+  private static final int DEFAULT_NUM_QUOTES = 5;
+
   /**
-    * This method retrives all quotes that are stored in Datastore
+    * Retrives all quotes that are stored in Datastore
     * and puts them into a list of quotes. This list is then written
     * as the response from the server. 
     */
@@ -46,32 +53,23 @@ public class DataServlet extends HttpServlet {
     PreparedQuery quotes = datastore.prepare(query);
 
     // Get the parameter for number to display, with 5 as the default value.
-    int numQuoteToDisplay = getNumQuoteDispalyed(request, 5);
-
+    int numQuoteToDisplay = getNumQuoteDisplayed(request, DEFAULT_NUM_QUOTES);
+   
     // Add each quote to the quote list whose content will be written as 
     // the response from the servlet. 
     List<Quote> quoteList = new ArrayList<>();
-    int quoteCount = 1; 
-    for (Entity quoteEntity : quotes.asIterable()) {
-      if (quoteCount > numQuoteToDisplay) {
-        break; 
-      }
-      long id = quoteEntity.getKey().getId();
-      String text = (String) quoteEntity.getProperty("text");
-      long timestamp = (long) quoteEntity.getProperty("timestamp");
-
-      Quote newQuote = new Quote(id, text, timestamp);
-      quoteList.add(newQuote);
-      quoteCount++; 
-    }
+    quotes.asList(FetchOptions.Builder.withLimit(numQuoteToDisplay))
+          .forEach((quoteEntity) -> {
+            quoteList.add(extractQuoteFromEntity(quoteEntity));
+          });
 
     String quotesJson = convertToJson(quoteList);
-    response.setContentType("text/html;");
+    response.setContentType("application/json");
     response.getWriter().println(quotesJson);
   }
 
   /**
-   * This method receives the quote that the user has inputed in the survey bar.
+   * Receives the quote that the user has inputed in the survey bar.
    * This new quote is changed into an Entity that is put into Datastore.
    * Each quote entity has a "text" and a "timstamp" field. 
    */ 
@@ -83,9 +81,9 @@ public class DataServlet extends HttpServlet {
     if (quote.length() > 0) {
       long timestamp = System.currentTimeMillis();
 
-      Entity quoteEntity = new Entity("Quote");
-      quoteEntity.setProperty("text", quote);
-      quoteEntity.setProperty("timestamp", timestamp);
+      Entity quoteEntity = new Entity(QUOTE);
+      quoteEntity.setProperty(TEXT, quote);
+      quoteEntity.setProperty(TIMESTAMP, timestamp);
 
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
       datastore.put(quoteEntity);
@@ -95,7 +93,19 @@ public class DataServlet extends HttpServlet {
   }
 
   /**
-   * This method handles the returning of request parameter. 
+   * Extracts the attributes of a quoteEntity and puts them into a new
+   * instance of Quote. 
+   */ 
+  private Quote extractQuoteFromEntity(Entity quoteEntity) {
+    long id = quoteEntity.getKey().getId();
+    String text = (String) quoteEntity.getProperty(TEXT);
+    long timestamp = (long) quoteEntity.getProperty(TIMESTAMP);
+    Quote newQuote = new Quote(id, text, timestamp);
+    return newQuote; 
+  }
+
+  /**
+   * Handles the returning of request parameter. 
    * @param request: the request from the survey
             name: the request parameter, which corresponds to a specific entry of the survey
             defaultValue: a default value for this survey entry's input
@@ -111,7 +121,7 @@ public class DataServlet extends HttpServlet {
   }
 
   /**
-   * This function takes in an ArrayList of quotes and converts it into a string 
+   * Takes in an ArrayList of quotes and converts it into a string 
    * that is in JSON format. 
    * @param a list of quotes
    * @return the quote list formated as a JSON string
@@ -123,19 +133,17 @@ public class DataServlet extends HttpServlet {
   }
 
   /**
-   * This method reads the numToDisplay parameter that is set by the user from the survey bar. 
+   * Reads the numToDisplay parameter that is set by the user from the survey bar. 
    * @param request: the request; defaultNum: default number to display set in doGet method. 
    * @return number of quotes to display 
    */ 
-  private int getNumQuoteDispalyed(HttpServletRequest request, int defaultNumToDisplay) {
-    int numDisplay;
+  private int getNumQuoteDisplayed(HttpServletRequest request, int defaultNumToDisplay) {
     String numQuoteDisplayParam = request.getParameter("numToDisplay");
 
     try {
-      numDisplay = Integer.parseInt(numQuoteDisplayParam);
+      return Integer.parseInt(numQuoteDisplayParam);
     } catch (NumberFormatException e) {
-      numDisplay = defaultNumToDisplay; 
+      return defaultNumToDisplay; 
     }
-    return numDisplay; 
   }
 }
