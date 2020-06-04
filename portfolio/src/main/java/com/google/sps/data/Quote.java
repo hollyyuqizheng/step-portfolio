@@ -1,4 +1,3 @@
-
 package com.google.sps.data;
 
 /** Class that models a quote. */
