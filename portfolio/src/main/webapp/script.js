@@ -96,21 +96,28 @@ function highlightSection(selectedIdString) {
 }
 
 /**
- * This function fetches the text from /data.
- * Then, the function puts the received text into the quoteWrapper. 
+ * This function fetches the text from /data, with additional parameters
+ * added to the request's URL string. 
+ * Then, the function puts the received text into the quoteWrapper
+ * that gets displayed on the UI.  
  */
 function getQuotes() {
-  fetch('/data')
-      .then(response => response.json())
-      .then((quotesJson) => {
-        const quoteListElement = document.getElementById('quoteWrapper');
-        quoteListElement.innerHTML = '';
+  const mainURL = '/data';
+  const numToDisplayURL = '?numToDisplay=';
+  const numToDisplay = document.getElementById("numToDisplay").value; 
+  const fetchURL = mainURL.concat(numToDisplayURL).concat(numToDisplay);
 
-        Object.values(quotesJson).forEach(
-          (quote) => {
-            quoteListElement.appendChild(createQuotesListElement(quote)); 
-          });        
-      });
+  fetch(fetchURL)
+    .then(response => response.json())
+    .then((quotesJson) => {
+      const quoteListElement = document.getElementById('quoteWrapper');
+      quoteListElement.innerHTML = '';
+
+      Object.values(quotesJson).forEach(
+        (quote) => {
+          quoteListElement.appendChild(createQuotesListElement(quote)); 
+        });        
+    });
 }
 
 /**

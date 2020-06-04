@@ -33,8 +33,6 @@ import java.util.ArrayList;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-  int numQuoteToDisplay = 10;
-
   /**
     * This method retrives all quotes that are stored in Datastore
     * and puts them into a list of quotes. This list is then written
@@ -45,6 +43,9 @@ public class DataServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Query query = new Query("Quote").addSort("timestamp", SortDirection.DESCENDING);
     PreparedQuery quotes = datastore.prepare(query);
+
+    // Get the parameter for number to display, with 5 as the default value.
+    int numQuoteToDisplay = getNumQuoteDispalyed(request, 5);
 
     // Add each quote to the quote list whose content will be written as 
     // the response from the servlet. 
@@ -70,10 +71,7 @@ public class DataServlet extends HttpServlet {
    * Each quote entity has a "text" and a "timstamp" field. 
    */ 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // Update the global variable numQuoteToDisplay. 
-    numQuoteToDisplay = getNumQuoteDispalyed(request);
-     
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {    
     String quote = request.getParameter("quote"); 
 
     // Only update the new quote if it is not an empty string. 
@@ -91,6 +89,8 @@ public class DataServlet extends HttpServlet {
     response.sendRedirect("/index.html");
   }
 
+
+
   /**
    * This method handles the returning of request parameter. 
    * @param request: the request from the survey
@@ -106,6 +106,8 @@ public class DataServlet extends HttpServlet {
     }
     return value;
   }
+
+
 
   /**
    * This function takes in an ArrayList of quotes and converts it into a string 
@@ -124,23 +126,14 @@ public class DataServlet extends HttpServlet {
    * @param request: the request; defaultNum: default number to display set in doGet method. 
    * @return number of quotes to display 
    */ 
-  private int getNumQuoteDispalyed(HttpServletRequest request) {
+  private int getNumQuoteDispalyed(HttpServletRequest request, int defaultNumToDisplay) {
     int numDisplay;
     String numQuoteDisplayParam = request.getParameter("numToDisplay");
 
-    // If the number to display entry is empty from the survey bar,
-    // this parameter hasn't been updated by the user, 
-    // so return the global variable numQuoteToDisplay.
-    if (numQuoteDisplayParam == "" || numQuoteDisplayParam == null) {
-      numDisplay = numQuoteToDisplay; 
-    } else {
-      // If this entry is not empty from the survey bar,
-      // the user has updated its preference, so update the number.   
-      try {
-        numDisplay = Integer.parseInt(numQuoteDisplayParam);
-      } catch (NumberFormatException e) {
-        numDisplay = numQuoteToDisplay; 
-      }
+    try {
+      numDisplay = Integer.parseInt(numQuoteDisplayParam);
+    } catch (NumberFormatException e) {
+      numDisplay = defaultNumToDisplay; 
     }
     return numDisplay; 
   }

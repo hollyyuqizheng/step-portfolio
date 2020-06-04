@@ -70,15 +70,24 @@
             <input type="text" name="quote">
             <input type="submit" />
           </span>
-          <br> 
+          <br>      
+        </form>
+
+        <form action="/data" method="GET">
           <span>
             The quotes you have entered will be posted here. 
             What is the maximum number of quotes you'd like to see?  
-            <input type="number" name="numToDisplay" min="1" max="20">
+            <label for="numToDisplay">Choose a number:</label>
+            <select name="numToDisplay" id="numToDisplay" onchange="getQuotes()">
+              <option type="number" value="3">3</option>
+              <option type="number" value="5" selected>5</option>
+              <option type="number" value="10">10</option>
+            </select>
           </span>
-          <ol id="quoteWrapper"></ol>
-        </form>   
-        <button id="refreshQuotesButton" onclick="cleanData()">Delete quotes</button>  
+        </form> 
+
+        <ol id="quoteWrapper"></ol>
+        <button id="refreshQuotesButton" onclick="cleanData()">Delete all quotes</button>  
       </div> 
 
       <div id="loginWrapper">
@@ -86,7 +95,7 @@
       </div>
 
       <div id="footer">
-        <p>Designed for STEP weeks 2&3 project. Holly Zheng. 2020.</p> 
+        <p>Designed for STEP weeks 2-5 project. Holly Zheng. 2020.</p> 
       </div>
 
     </div>    
