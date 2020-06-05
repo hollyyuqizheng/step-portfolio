@@ -49,7 +49,7 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Query query = new Query(QUOTE).addSort("timestamp", SortDirection.DESCENDING);
+    Query query = new Query(QUOTE).addSort(TIMESTAMP, SortDirection.DESCENDING);
     PreparedQuery quotes = datastore.prepare(query);
 
     // Get the parameter for number to display, with 5 as the default value.
