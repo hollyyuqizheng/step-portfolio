@@ -5,11 +5,11 @@ public final class Quote {
 
   private final long id;
   private final String text;
-  private final long timestamp;
+  private final long timestampMillis;
 
-  public Quote(long id, String text, long timestamp) {
+  public Quote(long id, String text, long timestampMillis) {
     this.id = id;
     this.text = text;
-    this.timestamp = timestamp;
+    this.timestampMillis = timestampMillis;
   }
 }

@@ -49,7 +49,7 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Query query = new Query("Quote").addSort("timestamp", SortDirection.DESCENDING);
+    Query query = new Query(QUOTE).addSort("timestamp", SortDirection.DESCENDING);
     PreparedQuery quotes = datastore.prepare(query);
 
     // Get the parameter for number to display, with 5 as the default value.
@@ -59,13 +59,21 @@ public class DataServlet extends HttpServlet {
     // the response from the servlet. 
     List<Quote> quoteList = new ArrayList<>();
     quotes.asList(FetchOptions.Builder.withLimit(numQuoteToDisplay))
-          .forEach((quoteEntity) -> {
-            quoteList.add(extractQuoteFromEntity(quoteEntity));
-          });
+        .forEach((quoteEntity) -> {
+          quoteList.add(extractQuoteFromEntity(quoteEntity));
+        });
+    
+    // Put the thread to sleep for a short period of time.
+    // This adds buffer time for querying Datastore. 
+    try {
+      Thread.sleep(200);
+    } catch (Exception e) {
+      System.out.println(e);
+    }
 
     String quotesJson = convertToJson(quoteList);
     response.setContentType("application/json");
-    response.getWriter().println(quotesJson);
+    response.getWriter().println(quotesJson); 
   }
 
   /**
@@ -79,11 +87,11 @@ public class DataServlet extends HttpServlet {
 
     // Only update the new quote if it is not an empty string. 
     if (quote.length() > 0) {
-      long timestamp = System.currentTimeMillis();
+      long timestampMillis = System.currentTimeMillis();
 
       Entity quoteEntity = new Entity(QUOTE);
       quoteEntity.setProperty(TEXT, quote);
-      quoteEntity.setProperty(TIMESTAMP, timestamp);
+      quoteEntity.setProperty(TIMESTAMP, timestampMillis);
 
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
       datastore.put(quoteEntity);
@@ -99,8 +107,8 @@ public class DataServlet extends HttpServlet {
   private Quote extractQuoteFromEntity(Entity quoteEntity) {
     long id = quoteEntity.getKey().getId();
     String text = (String) quoteEntity.getProperty(TEXT);
-    long timestamp = (long) quoteEntity.getProperty(TIMESTAMP);
-    Quote newQuote = new Quote(id, text, timestamp);
+    long timestampMillis = (long) quoteEntity.getProperty(TIMESTAMP);
+    Quote newQuote = new Quote(id, text, timestampMillis);
     return newQuote; 
   }
 

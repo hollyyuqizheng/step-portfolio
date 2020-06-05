@@ -44,9 +44,9 @@ public class DeleteDataServlet extends HttpServlet {
 
     List<Key> keyList = new ArrayList<Key>();
     quotes.asIterable()
-          .forEach((quoteEntity) -> {
-            keyList.add(quoteEntity.getKey());
-          });
+        .forEach((quoteEntity) -> {
+          keyList.add(quoteEntity.getKey());
+        });
 
     datastore.delete(keyList);
   }

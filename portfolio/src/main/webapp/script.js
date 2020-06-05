@@ -102,12 +102,12 @@ function highlightSection(selectedIdString) {
  * that gets displayed on the UI.  
  */
 function getQuotes() {
-  const mainURL = '/data';
-  const numToDisplayURL = '?numToDisplay=';
-  const numToDisplay = document.getElementById("numToDisplay").value; 
-  const fetchURL = mainURL.concat(numToDisplayURL).concat(numToDisplay);
+  const mainUrl = '/data';
+  const numToDisplayUrl = '?numToDisplay=';
+  const numToDisplay = document.getElementById('numToDisplay').value; 
+  const fetchUrl = mainUrl.concat(numToDisplayUrl).concat(numToDisplay);
 
-  fetch(fetchURL)
+  fetch(fetchUrl)
     .then(response => response.json())
     .then((quotesJson) => {
       const quoteListElement = document.getElementById('quoteWrapper');
