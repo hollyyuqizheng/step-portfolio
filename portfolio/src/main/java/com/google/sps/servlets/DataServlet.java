@@ -45,8 +45,8 @@ public class DataServlet extends HttpServlet {
 
     if (userService.isUserLoggedIn()) {
       String userEmail = userService.getCurrentUser().getEmail();
-      String urlToRedirectToAfterUserLogsOut = "/";
-      String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
+      String urlToRedirectToForLogOut = "/";
+      String logoutUrl = userService.createLogoutURL(urlToRedirectToForLogOut);
       String nickname = getUserNickname(userService.getCurrentUser().getUserId());  
 
       responseMap.put(LOGGEDIN, "true");
@@ -57,10 +57,9 @@ public class DataServlet extends HttpServlet {
       // Only display quotes if the user is logged in
       String quotesJson = getQuoteListJson(request);
       responseMap.put(QUOTE, quotesJson);
-
     } else {
-      String urlToRedirectToAfterUserLogsIn = "/";
-      String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
+      String urlToRedirectToForLogIn = "/";
+      String loginUrl = userService.createLoginURL(urlToRedirectToForLogIn);
       responseMap.put(LOGGEDIN, "false");
       responseMap.put(USEREMAIL, null);
       responseMap.put(REDIRECTURL, loginUrl); 

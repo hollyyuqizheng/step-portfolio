@@ -31,6 +31,11 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/nickname")
 public class NicknameServlet extends HttpServlet {
 
+  /**
+   * Handles GET request. If the user is logged in, display a page for them to input 
+   * nickname. This servlet will only be sent a request to if the logged in user 
+   * does not yet have a nickname.
+   */ 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("text/html");
@@ -38,20 +43,19 @@ public class NicknameServlet extends HttpServlet {
     out.println("<h1>Set Nickname</h1>");
 
     UserService userService = UserServiceFactory.getUserService();
-    if (userService.isUserLoggedIn()) {
-      String nickname = getUserNickname(userService.getCurrentUser().getUserId());
-      out.println("<p>Set your nickname here:</p>");
-      out.println("<form method=\"POST\" action=\"/nickname\">");
-      out.println("<input name=\"nickname\" value=\"" + nickname + "\" />");
-      out.println("<br/>");
-      out.println("<button>Submit</button>");
-      out.println("</form>");
-    } else {
-      String loginUrl = userService.createLoginURL("/nickname");
-      out.println("<p>Login <a href=\"" + loginUrl + "\">here</a>.</p>");
-    }
+    String nickname = getUserNickname(userService.getCurrentUser().getUserId());
+    out.println("<p>Set your nickname here:</p>");
+    out.println("<form method=\"POST\" action=\"/nickname\">");
+    out.println("<input name=\"nickname\" value=\"" + nickname + "\" />");
+    out.println("<br/>");
+    out.println("<button>Submit</button>");
+    out.println("</form>");
   }
 
+  /**
+   * Handles POST request by putting a nickname into Datastore and 
+   * associate it with a user id. 
+   */ 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
