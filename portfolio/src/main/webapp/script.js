@@ -27,7 +27,7 @@ function addHobby() {
 }
 
 /**
- * This function is called when any of the project box is clicked.
+ * Adds description for each project in project section. 
  * Input: string -- name of the selected project
  * Results: 
  * - change the text of the project description box so that the description text appears. 
@@ -64,8 +64,7 @@ function addProjectDescription(project) {
 }
 
 /**
- * This is the helper function for addProjectDescription.
- * This function creates a data key-value pair object for each project. 
+ * Creates a data key-value pair object for each project. 
  */
 function createProjectData(projectDetail, backgroundColor) {
   projectData = {}
@@ -75,7 +74,7 @@ function createProjectData(projectDetail, backgroundColor) {
 }
 
 /**
- * This function enables the highlighting of a selected section from the navigation bar. 
+ * Enables the highlighting of a selected section from the navigation bar. 
  * This function is called by the clicking of any one of the boxes in the navigation bar.
  * Input: section to select
  * Effect: selected section will have their border shown, and all the other sections 
@@ -96,7 +95,7 @@ function highlightSection(selectedIdString) {
 }
 
 /**
- * This function fetches the text from /data, with additional parameters
+ * Fetches the text from /data, with additional parameters
  * added to the request's URL string. 
  * Then, the function puts the received text into the quoteWrapper
  * that gets displayed on the UI.  
@@ -109,30 +108,90 @@ function getQuotes() {
 
   fetch(fetchUrl)
     .then(response => response.json())
-    .then((quotesJson) => {
-      const quoteListElement = document.getElementById('quoteWrapper');
-      quoteListElement.innerHTML = '';
-
-      Object.values(quotesJson).forEach(
-        (quote) => {
-          quoteListElement.appendChild(createQuotesListElement(quote)); 
-        });        
+    .then((responseJson) => {
+      updateLoginStatusElements(responseJson);
+      if (responseJson['Quote'] !== undefined) {
+        const quotesJson = JSON.parse(responseJson['Quote']);
+        createQuotesList(quotesJson);
+      }      
     });
 }
 
 /**
- * This is a helper function, called inside getQuotes. 
- * This function creates a li element that contains each individual quote;
+ * Creates a list for all fetched quotes from the GET request. 
+ */
+function createQuotesList(quotesJson) {
+  if (quotesJson !== null) {
+    const quoteListElement = document.getElementById('quoteWrapper');
+    quoteListElement.innerHTML = '';
+
+    Object.values(quotesJson).forEach(
+      (quote) => {
+        quoteListElement.appendChild(createQuotesListElement(quote)); 
+      }); 
+  }
+}
+
+/**
+ * Creates a li element that contains each individual quote;
  * this li element will be added to the Quotes section in the HTML file.  
  */
 function createQuotesListElement(quote) {
   const liElement = document.createElement('li');
-  liElement.innerText = quote.text;
+  const nickname = quote.nickname;  
+
+  if (nickname === undefined) {
+    liElement.innerText = quote.text.concat(' -- unknown user');
+  } else {
+    liElement.innerText = quote.text.concat(' -- ').concat(nickname);
+  }
   return liElement;
 }
 
 /**
- * This function performs a POST request to deleteQuote servlet, which 
+ * Updates divs and texts on the UI according to the user's login status. 
+ */
+function updateLoginStatusElements(responseJson) {
+  const showAfterLogin = document.getElementById('showAfterLogin'); 
+  const loginText = document.getElementById('loginText');
+  const loginStatus = document.getElementById('loginStatus'); 
+  const redirectText = document.getElementById('redirectText');
+  redirectText.href = responseJson['redirectUrl'];
+
+  const status = responseJson['loggedIn'];
+  if (status === 'true') {
+    showAfterLogin.style.visibility = 'visible';
+    loginText.style.visibility = 'hidden';
+    redirectText.innerText = 'Log out ';
+    handleNicknameDisplay(responseJson);  
+  } else {
+    showAfterLogin.style.visibility = 'hidden';
+    loginText.style.visibility = 'visible';
+    loginStatus.innerText = 'Not logged in yet';
+    redirectText.innerText = 'Log in ';    
+  }     
+}
+
+/**
+ * Displays the username's nickname if a nickname is stored in the response
+ * Json returned by GET request. If a nickname does not exist,
+ * the textbox prompting the user to create a nickname appears. 
+ */
+function handleNicknameDisplay(responseJson) {
+  const nickname = responseJson['nickname'];
+  const createNicknameText = document.getElementById('createNickname'); 
+
+  if (nickname === undefined || nickname === null) {
+    createNicknameText.style.visibility = 'visible';
+  } else {
+    createNicknameText.style.visibility = 'hidden'; 
+    const loginStatus = document.getElementById('loginStatus'); 
+    loginStatus.innerText = 'Logged in as '.concat(nickname); 
+  }
+}
+
+/**
+ * Performs a POST request to deleteQuote servlet, which 
  * handles the deletion of all quotes in Datastore. 
  */
 function cleanData() {
@@ -143,10 +202,16 @@ function cleanData() {
 }
 
 /**
- * This function handles the visual refreshing of the quote list element 
+ * Handles the visual refreshing of the quote list element 
  * by setting its content to empty. 
  */
 function refreshQuotes() {
   const quoteListElement = document.getElementById('quoteWrapper');
   quoteListElement.innerHTML = '';
+}
+
+/** Creates a map and adds it to the page. */
+function createMap() {
+  const map = new google.maps.Map(document.getElementById('simpleMap'),
+      {center: {lat: 37.422, lng: -122.084}, zoom: 16});
 }

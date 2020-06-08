@@ -38,8 +38,14 @@
     grid-row-start:3; 
   }
 
-  #footer {
+  #mapWrapper {
+    grid-column-end: span 2;
+    grid-column-start: 1;
     grid-row-start: 4; 
+  }
+
+  #footer {
+    grid-row-start: 5; 
   }
 } 
 
@@ -105,7 +111,7 @@
   color: white; 
   bottom: 0; 
   font-size: 20px;
-  opacity:0;
+  opacity: 0;
   padding: 10px;
   position: absolute; 
   text-align: center;
@@ -203,8 +209,10 @@
 }
 
 #surveyWrapper {
+  display: block; 
   background-color: yellow; 
   padding: 10%; 
+  position: relative;
   width: 100%;
 }
 
@@ -216,4 +224,17 @@
   background-color: antiquewhite; 
   padding: 10%; 
   width: 100%;
+}
+
+#createNickname {
+  visibility: hidden; 
+}
+
+#mapWrapper {
+  min-height: 500px; 
+  padding: 10%; 
+}
+
+#simpleMap {
+  height: 100%;
 }
