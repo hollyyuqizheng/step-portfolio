@@ -6,22 +6,23 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body>
+  <body onload="getQuotes()">
     <div id="pageWrapper">
       <div id="navbar">
         <div class="navButton" onClick="highlightSection('basicInfo')">Introduction</div> 
         <div class="navButton" onClick="highlightSection('hobbyWrapper')">Hobbies</div> 
         <div class="navButton" onClick="highlightSection('projects')">Projects</div> 
+        <div class="navButton"><a href="#surveyWrapper">Chat with me!</a></div>
       </div> 
-
+      
       <div id="introduction">
         <h1>Hi there!</h1>
         <div id="headshotWrapper">
-          <img class="headshot" id="image" src="city.jpg" alt="skyline of Beijing"/>
-          <div id="caption">My name is Holly, and this is a small place on the Internet that has my portfolio.</div> 
+          <img class="headshot" src="city.jpg" alt="Skyline of Beijing"/>
+          <div id="headshotCaption">My name is Holly, and this is one of my favorite views  
+            in my hometown: Beijing, China.</div> 
         </div>   
-
-        <p>Click here to see some of my hobbies:</p>
+        <br> 
         <button onclick="addHobby()">What are my hobbies?</button>
         <div id="hobbyWrapper" class="navbarSection">
           <div id="hobbyContainer"></div>
@@ -34,7 +35,6 @@
           <ul> 
             <li>Studying Computer Science and Linguistics at Brown University</li>  
             <li>Currently: Building Web App at Google (STEP internship)</li>
-            <li>Hobbies: playing the Clarinet, reading novels, (trying to) talk in Spanish</li> 
             <li>Find me on<a href="https://linkedin.com/in/hollyyuqizheng" target="_blank"> LinkedIn</a> 
                 and<a href="https://github.com/hollyyuqizheng" target="_blank"> GitHub</a></li> 
           </ul> 
@@ -62,8 +62,40 @@
         </div>
       </div>
 
+      <div id="surveyWrapper">
+        <h2>I'm always down to chat!</h2> 
+        <form action="/data" method="POST">
+          <span>
+            Please tell me one of your favorite quotes from books or movies:
+            <input type="text" name="quote">
+            <input type="submit" />
+          </span>
+          <br>      
+        </form>
+
+        <form action="/data" method="GET">
+          <span>
+            The quotes you have entered will be posted here. 
+            What is the maximum number of quotes you'd like to see?  
+            <label for="numToDisplay">Choose a number:</label>
+            <select name="numToDisplay" id="numToDisplay" onchange="getQuotes()">
+              <option type="number" value="3">3</option>
+              <option type="number" value="5" selected>5</option>
+              <option type="number" value="10">10</option>
+            </select>
+          </span>
+        </form> 
+
+        <ol id="quoteWrapper"></ol>
+        <button id="refreshQuotesButton" onclick="cleanData()">Delete all quotes</button>  
+      </div> 
+
+      <div id="loginWrapper">
+        <h2>Log in here</h2>
+      </div>
+
       <div id="footer">
-        <p>Designed for STEP week 2 project. Holly Zheng. 2020.</p> 
+        <p>Designed for STEP weeks 2-5 project. Holly Zheng. 2020.</p> 
       </div>
 
     </div>    

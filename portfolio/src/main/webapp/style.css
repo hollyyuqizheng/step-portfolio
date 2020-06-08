@@ -18,10 +18,6 @@
     grid-row-start: 1; 
   }
 
-  #footer {
-    grid-row-start: 3; 
-  }
-
   #introduction {
     grid-column-start: 1;
     grid-row-start: 2; 
@@ -31,10 +27,24 @@
     grid-column-start: 2; 
     grid-row-start: 2; 
   }
+
+  #surveyWrapper {
+    grid-column-start: 1;
+    grid-row-start: 3;
+  }
+
+  #loginWrapper {
+    grid-column-start: 2;
+    grid-row-start:3; 
+  }
+
+  #footer {
+    grid-row-start: 4; 
+  }
 } 
 
 #introduction, 
-#basicInfo, 
+#basicInfo,
 #projects {
   margin-left: 5%;
   margin-right: 5%; 
@@ -73,7 +83,7 @@
 #hobbyWrapper {
   height: 100px;
   margin-top: 1%;
-  max-width: 150px;
+  max-width: 300px;
   padding: 2%; 
 }
 
@@ -87,9 +97,10 @@
   display: block; 
   min-width: 500px;
   max-width: 600px; 
+  width: 100%; 
 }
 
-#caption {
+#headshotCaption {
   background: rgba(0, 0, 0, 0.5);
   color: white; 
   bottom: 0; 
@@ -99,16 +110,17 @@
   position: absolute; 
   text-align: center;
   transition: .4s ease;
-  width: 100%;
+  width: inherit; 
 }
 
-#headshotWrapper:hover #caption {
+#headshotWrapper:hover #headshotCaption {
   opacity: 1; 
 }
 
 .h1, 
 .h2, 
-.h3, 
+.h3,
+.span 
 .li, 
 .p {
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
@@ -118,7 +130,8 @@
   font-size: 35px;
 }
 
-.h2 {
+.h2,
+.span {
   font-size: 30px;
 }
 
@@ -187,4 +200,20 @@
 #projectDescriptionHelmet {
   grid-column-start: 2;
   grid-row-start: 3;
+}
+
+#surveyWrapper {
+  background-color: yellow; 
+  padding: 10%; 
+  width: 100%;
+}
+
+#quoteWrapper {
+  width: 40%; 
+}
+
+#loginWrapper {
+  background-color: antiquewhite; 
+  padding: 10%; 
+  width: 100%;
 }
