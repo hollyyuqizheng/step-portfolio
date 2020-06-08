@@ -111,11 +111,11 @@ public class DataServlet extends HttpServlet {
   private void putQuoteIntoDatastore(HttpServletRequest request, HashMap<String, String> userInfo) {
     String quote = request.getParameter("quote");   
     if (quote.length() > 0) {
-      long timestamp = System.currentTimeMillis();
+      long timestampMillis = System.currentTimeMillis();
 
       Entity quoteEntity = new Entity(QUOTE);
       quoteEntity.setProperty(TEXT, quote);
-      quoteEntity.setProperty(TIMESTAMP, timestamp);
+      quoteEntity.setProperty(TIMESTAMP, timestampMillis);
       quoteEntity.setProperty(USEREMAIL, userInfo.get(USEREMAIL)); 
       quoteEntity.setProperty(NICKNAME, userInfo.get(NICKNAME));
 
@@ -174,10 +174,10 @@ public class DataServlet extends HttpServlet {
   private Quote extractQuoteFromEntity(Entity quoteEntity) {
     long id = quoteEntity.getKey().getId();
     String text = (String) quoteEntity.getProperty(TEXT);
-    long timestamp = (long) quoteEntity.getProperty(TIMESTAMP);
+    long timestampMillis = (long) quoteEntity.getProperty(TIMESTAMP);
     String userEmail = (String) quoteEntity.getProperty(USEREMAIL); 
     String nickname = (String) quoteEntity.getProperty(NICKNAME); 
-    Quote newQuote = new Quote(id, text, timestamp, userEmail, nickname);
+    Quote newQuote = new Quote(id, text, timestampMillis, userEmail, nickname);
     return newQuote; 
   } 
 
