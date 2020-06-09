@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 /**
  * Adds a list of hobbies to the page by displaying the hobby's description text
  * and updating the wrapper's background color so that it appears 
@@ -181,7 +182,7 @@ function handleNicknameDisplay(responseJson) {
   const nickname = responseJson['nickname'];
   const createNicknameText = document.getElementById('createNickname'); 
 
-  if (nickname === undefined || nickname === null) {
+  if (!nickname) {
     createNicknameText.style.visibility = 'visible';
   } else {
     createNicknameText.style.visibility = 'hidden'; 
@@ -208,10 +209,4 @@ function cleanData() {
 function refreshQuotes() {
   const quoteListElement = document.getElementById('quoteWrapper');
   quoteListElement.innerHTML = '';
-}
-
-/** Creates a map and adds it to the page. */
-function createMap() {
-  const map = new google.maps.Map(document.getElementById('simpleMap'),
-      {center: {lat: 37.422, lng: -122.084}, zoom: 16});
 }

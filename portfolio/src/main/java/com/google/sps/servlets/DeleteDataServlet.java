@@ -21,7 +21,10 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions; 
-import com.google.appengine.api.datastore.FetchOptions.Builder; 
+import com.google.appengine.api.datastore.DatastoreServiceConfig;
+import com.google.appengine.api.datastore.DatastoreServiceConfig.Builder;  
+import com.google.appengine.api.datastore.ReadPolicy;
+import com.google.appengine.api.datastore.ReadPolicy.Consistency;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -38,7 +41,7 @@ public class DeleteDataServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    DatastoreService datastore = getDatastoreServiceWithConsistency();
     Query query = new Query(QUOTE);
     PreparedQuery quotes = datastore.prepare(query);
 
@@ -49,5 +52,17 @@ public class DeleteDataServlet extends HttpServlet {
         });
 
     datastore.delete(keyList);
+  }
+
+  /**
+   * Sets up strong consistency for datastore service. 
+   * This Strong Consistency ensures that freshness is more important than availability
+   * so that the most up-to-date data is returned and displayed on the page.
+   */ 
+  private DatastoreService getDatastoreServiceWithConsistency() { 
+    DatastoreServiceConfig datastoreConfig = 
+        DatastoreServiceConfig.Builder.withReadPolicy(new ReadPolicy(Consistency.STRONG)).deadline(5.0);
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService(datastoreConfig);
+    return datastore; 
   }
 }

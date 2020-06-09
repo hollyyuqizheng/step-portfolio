@@ -1,5 +1,6 @@
 package com.google.sps.servlets;
 
+import com.google.appengine.api.users.User; 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.api.datastore.DatastoreService;
@@ -21,7 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
 import java.util.List; 
-import java.util.ArrayList; 
+import java.util.ArrayList;
+import java.util.Map; 
 import java.util.HashMap; 
 
 @WebServlet("/data")
@@ -30,41 +32,37 @@ public class DataServlet extends HttpServlet {
   private static final String QUOTE = "Quote";
   private static final String TEXT = "text";
   private static final String TIMESTAMP = "timestamp"; 
-  private static final String USEREMAIL = "userEmail";
-  private static final String LOGGEDIN = "loggedIn"; 
-  private static final String REDIRECTURL = "redirectUrl";
+  private static final String USER_EMAIL = "userEmail";
+  private static final String LOGGED_IN = "loggedIn"; 
+  private static final String REDIRECT_URL = "redirectUrl";
   private static final String NICKNAME = "nickname";
   private static final int DEFAULT_NUM_QUOTES = 5;
+  private static final String HOME_URL = "/"; 
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("application/json");
 
     UserService userService = UserServiceFactory.getUserService();
-    HashMap<String, String> responseMap = new HashMap<String, String>();
+
+    Map<String, String> responseMap = new HashMap<String, String>();
+    User currentUser = userService.getCurrentUser(); 
 
     if (userService.isUserLoggedIn()) {
-      String userEmail = userService.getCurrentUser().getEmail();
-      String urlToRedirectToForLogOut = "/";
-      String logoutUrl = userService.createLogoutURL(urlToRedirectToForLogOut);
-      String nickname = getUserNickname(userService.getCurrentUser().getUserId());  
+      String logoutUrl = userService.createLogoutURL(HOME_URL);
+      String nickname = getUserNickname(currentUser.getUserId());  
 
-      responseMap.put(LOGGEDIN, "true");
-      responseMap.put(USEREMAIL, userEmail);
-      responseMap.put(REDIRECTURL, logoutUrl); 
+      responseMap.put(LOGGED_IN, "true");
+      responseMap.put(REDIRECT_URL, logoutUrl); 
       responseMap.put(NICKNAME, nickname); 
 
       // Only display quotes if the user is logged in
       String quotesJson = getQuoteListJson(request);
       responseMap.put(QUOTE, quotesJson);
     } else {
-      String urlToRedirectToForLogIn = "/";
-      String loginUrl = userService.createLoginURL(urlToRedirectToForLogIn);
-      responseMap.put(LOGGEDIN, "false");
-      responseMap.put(USEREMAIL, null);
-      responseMap.put(REDIRECTURL, loginUrl); 
-      responseMap.put(NICKNAME, null); 
-      responseMap.put(QUOTE, null);
+      String loginUrl = userService.createLoginURL(HOME_URL);
+      responseMap.put(LOGGED_IN, "false");
+      responseMap.put(REDIRECT_URL, loginUrl); 
     }
 
     Gson gson = new Gson();
@@ -77,21 +75,26 @@ public class DataServlet extends HttpServlet {
     UserService userService = UserServiceFactory.getUserService();
 
     if (userService.isUserLoggedIn()) {
-      String userEmail = userService.getCurrentUser().getEmail();
-      String nickname = getUserNickname(userService.getCurrentUser().getUserId()); 
-
-      // HashMap that contains user information: email address, nickname.
-      HashMap<String, String> userInfo = new HashMap<String, String>();
-      userInfo.put(USEREMAIL, userEmail);
-      userInfo.put(NICKNAME, nickname); 
-
-      putQuoteIntoDatastore(request, userInfo);
+      User currentUser = userService.getCurrentUser(); 
+      putQuoteIntoDatastore(request, currentUser);
     } 
 
     response.sendRedirect("/index.html");
   } 
 
-   /**
+  /**
+   * Sets up strong consistency for datastore service. 
+   * This Strong Consistency ensures that freshness is more important than availability
+   * so that the most up-to-date data is returned and displayed on the page.
+   */ 
+  private DatastoreService getDatastoreServiceWithConsistency() { 
+    DatastoreServiceConfig datastoreConfig = 
+        DatastoreServiceConfig.Builder.withReadPolicy(new ReadPolicy(Consistency.STRONG)).deadline(5.0);
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService(datastoreConfig);
+    return datastore; 
+  }
+
+  /**
    * Takes in an ArrayList of quotes and converts it into a string 
    * that is in JSON format. 
    * @param a list of quotes
@@ -108,7 +111,7 @@ public class DataServlet extends HttpServlet {
    * @param request: the HTTP request; 
    *        userInfo: a HashMap that contains user information connected to each quote
    */ 
-  private void putQuoteIntoDatastore(HttpServletRequest request, HashMap<String, String> userInfo) {
+  private void putQuoteIntoDatastore(HttpServletRequest request, User user) {
     String quote = request.getParameter("quote");   
     if (quote.length() > 0) {
       long timestampMillis = System.currentTimeMillis();
@@ -116,15 +119,10 @@ public class DataServlet extends HttpServlet {
       Entity quoteEntity = new Entity(QUOTE);
       quoteEntity.setProperty(TEXT, quote);
       quoteEntity.setProperty(TIMESTAMP, timestampMillis);
-      quoteEntity.setProperty(USEREMAIL, userInfo.get(USEREMAIL)); 
-      quoteEntity.setProperty(NICKNAME, userInfo.get(NICKNAME));
+      quoteEntity.setProperty(USER_EMAIL, user.getEmail()); 
+      quoteEntity.setProperty(NICKNAME, getUserNickname(user.getUserId()));
 
-      // This Strong Consistency ensures that freshness is more important than availability
-      // so that the most up-to-date data is returned and displayed on the page. 
-      DatastoreServiceConfig datastoreConfig = 
-          DatastoreServiceConfig.Builder.withReadPolicy(new ReadPolicy(Consistency.STRONG)).deadline(5.0);
-
-      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+      DatastoreService datastore = getDatastoreServiceWithConsistency();
       datastore.put(quoteEntity);
     }
   }
@@ -144,9 +142,9 @@ public class DataServlet extends HttpServlet {
     // the response from the servlet. 
     List<Quote> quoteList = new ArrayList<>();
     quotes.asList(FetchOptions.Builder.withLimit(numQuoteToDisplay))
-          .forEach((quoteEntity) -> {
-            quoteList.add(extractQuoteFromEntity(quoteEntity));
-          });
+        .forEach((quoteEntity) -> {
+          quoteList.add(extractQuoteFromEntity(quoteEntity));
+        });
 
     String quotesJson = convertQuotesToJson(quoteList);
     return quotesJson; 
@@ -175,7 +173,7 @@ public class DataServlet extends HttpServlet {
     long id = quoteEntity.getKey().getId();
     String text = (String) quoteEntity.getProperty(TEXT);
     long timestampMillis = (long) quoteEntity.getProperty(TIMESTAMP);
-    String userEmail = (String) quoteEntity.getProperty(USEREMAIL); 
+    String userEmail = (String) quoteEntity.getProperty(USER_EMAIL); 
     String nickname = (String) quoteEntity.getProperty(NICKNAME); 
     Quote newQuote = new Quote(id, text, timestampMillis, userEmail, nickname);
     return newQuote; 

@@ -21,6 +21,10 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.appengine.api.datastore.DatastoreServiceConfig;
+import com.google.appengine.api.datastore.DatastoreServiceConfig.Builder;  
+import com.google.appengine.api.datastore.ReadPolicy;
+import com.google.appengine.api.datastore.ReadPolicy.Consistency;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.annotation.WebServlet;
@@ -67,7 +71,7 @@ public class NicknameServlet extends HttpServlet {
     String nickname = request.getParameter("nickname");
     String id = userService.getCurrentUser().getUserId();
 
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    DatastoreService datastore = getDatastoreServiceWithConsistency();
     Entity entity = new Entity("UserInfo", id);
     entity.setProperty("id", id);
     entity.setProperty("nickname", nickname);
@@ -81,7 +85,7 @@ public class NicknameServlet extends HttpServlet {
    * Returns the nickname of the user with id, or empty String if the user has not set a nickname.
    */
   private String getUserNickname(String id) {
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    DatastoreService datastore = getDatastoreServiceWithConsistency();
     Query query =
         new Query("UserInfo")
             .setFilter(new Query.FilterPredicate("id", Query.FilterOperator.EQUAL, id));
@@ -92,5 +96,17 @@ public class NicknameServlet extends HttpServlet {
     }
     String nickname = (String) entity.getProperty("nickname");
     return nickname;
+  }
+
+  /**
+   * Sets up strong consistency for datastore service. 
+   * This Strong Consistency ensures that freshness is more important than availability
+   * so that the most up-to-date data is returned and displayed on the page.
+   */ 
+  private DatastoreService getDatastoreServiceWithConsistency() { 
+    DatastoreServiceConfig datastoreConfig = 
+        DatastoreServiceConfig.Builder.withReadPolicy(new ReadPolicy(Consistency.STRONG)).deadline(5.0);
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService(datastoreConfig);
+    return datastore; 
   }
 }
