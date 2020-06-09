@@ -183,7 +183,7 @@ public class DataServlet extends HttpServlet {
    * Returns the nickname of the user with id, or empty String if the user has not set a nickname.
    */
   private String getUserNickname(String id) {
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    DatastoreService datastore = getDatastoreServiceWithConsistency();
     Query query =
         new Query("UserInfo")
             .setFilter(new Query.FilterPredicate("id", Query.FilterOperator.EQUAL, id));
