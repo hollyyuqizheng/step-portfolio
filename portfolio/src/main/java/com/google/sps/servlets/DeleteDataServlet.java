@@ -14,6 +14,8 @@
 
 package com.google.sps.servlets;
 
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Key;
@@ -38,17 +40,24 @@ import java.util.ArrayList;
 public class DeleteDataServlet extends HttpServlet {
 
   private static final String QUOTE = "Quote";
+  private static final String USER_EMAIL = "userEmail";
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    UserService userService = UserServiceFactory.getUserService();
+    String userEmail = userService.getCurrentUser().getEmail(); 
+
     DatastoreService datastore = getDatastoreServiceWithConsistency();
     Query query = new Query(QUOTE);
     PreparedQuery quotes = datastore.prepare(query);
 
+    // Only delete quotes that were submitted by the currently logged in user. 
     List<Key> keyList = new ArrayList<Key>();
     quotes.asIterable()
         .forEach((quoteEntity) -> {
-          keyList.add(quoteEntity.getKey());
+          if (quoteEntity.getProperty(USER_EMAIL).equals(userEmail)) {
+            keyList.add(quoteEntity.getKey());
+          } 
         });
 
     datastore.delete(keyList);
