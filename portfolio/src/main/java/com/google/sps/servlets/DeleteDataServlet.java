@@ -65,7 +65,7 @@ public class DeleteDataServlet extends HttpServlet {
 
   /**
    * Sets up strong consistency for datastore service. 
-   * This Strong Consistency ensures that freshness is more important than availability
+   * This strong consistency ensures that freshness is more important than availability
    * so that the most up-to-date data is returned and displayed on the page.
    */ 
   private DatastoreService getDatastoreServiceWithConsistency() { 

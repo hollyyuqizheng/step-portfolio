@@ -176,12 +176,12 @@ public class DataServlet extends HttpServlet {
    * instance of Quote. 
    */ 
   private Quote extractQuoteFromEntity(Entity quoteEntity) {
-    long id = quoteEntity.getKey().getId();
+    long quoteId = quoteEntity.getKey().getId();
     String text = (String) quoteEntity.getProperty(TEXT);
     long timestampMillis = (long) quoteEntity.getProperty(TIMESTAMP);
     String userEmail = (String) quoteEntity.getProperty(USER_EMAIL); 
     String nickname = (String) quoteEntity.getProperty(NICKNAME); 
-    Quote newQuote = new Quote(id, text, timestampMillis, userEmail, nickname);
+    Quote newQuote = new Quote(quoteId, text, timestampMillis, userEmail, nickname);
     return newQuote; 
   } 
 
