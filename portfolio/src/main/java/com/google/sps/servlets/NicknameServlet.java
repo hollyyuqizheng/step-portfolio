@@ -36,7 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 public class NicknameServlet extends HttpServlet {
 
   /**
-   * Handles GET request. If the user is logged in, display a page for them to input 
+   * Handles GET request. If the user is logged in, displays a page for them to input 
    * nickname. This servlet will only be sent a request to if the logged in user 
    * does not yet have a nickname.
    */ 
@@ -69,11 +69,11 @@ public class NicknameServlet extends HttpServlet {
     }
 
     String nickname = request.getParameter("nickname");
-    String id = userService.getCurrentUser().getUserId();
+    String userId = userService.getCurrentUser().getUserId();
 
     DatastoreService datastore = getDatastoreServiceWithConsistency();
-    Entity entity = new Entity("UserInfo", id);
-    entity.setProperty("id", id);
+    Entity entity = new Entity("UserInfo", userId);
+    entity.setProperty("userId", userId);
     entity.setProperty("nickname", nickname);
 
     datastore.put(entity);
@@ -82,17 +82,17 @@ public class NicknameServlet extends HttpServlet {
   }
 
   /**
-   * Returns the nickname of the user with id, or empty String if the user has not set a nickname.
+   * Returns the nickname of the user with id, or null if the user has not set a nickname.
    */
-  private String getUserNickname(String id) {
+  private String getUserNickname(String userId) {
     DatastoreService datastore = getDatastoreServiceWithConsistency();
     Query query =
         new Query("UserInfo")
-            .setFilter(new Query.FilterPredicate("id", Query.FilterOperator.EQUAL, id));
+            .setFilter(new Query.FilterPredicate("userId", Query.FilterOperator.EQUAL, userId));
     PreparedQuery results = datastore.prepare(query);
     Entity entity = results.asSingleEntity();
     if (entity == null) {
-      return "";
+      return null;
     }
     String nickname = (String) entity.getProperty("nickname");
     return nickname;
@@ -100,7 +100,7 @@ public class NicknameServlet extends HttpServlet {
 
   /**
    * Sets up strong consistency for datastore service. 
-   * This Strong Consistency ensures that freshness is more important than availability
+   * This strong consistency ensures that freshness is more important than availability
    * so that the most up-to-date data is returned and displayed on the page.
    */ 
   private DatastoreService getDatastoreServiceWithConsistency() { 
