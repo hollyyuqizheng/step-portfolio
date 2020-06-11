@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 /**
  * Adds a list of hobbies to the page by displaying the hobby's description text
  * and updating the wrapper's background color so that it appears 
@@ -140,7 +139,6 @@ function createQuotesList(quotesJson) {
 function createQuotesListElement(quote) {
   const liElement = document.createElement('li');
   const nickname = quote.nickname;  
-  console.log(nickname);
 
   if (!nickname) {
     liElement.innerText = quote.text.concat(' -- unknown user');

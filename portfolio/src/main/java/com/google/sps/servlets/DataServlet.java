@@ -26,14 +26,14 @@ import java.util.Optional;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-  private static final String QUOTE = "Quote";
   private static final String INDEX_URL = "/index.html"; 
 
   // Constants for property of a Quote item in Datastore.
-  private static final String TEXT = "text";
-  private static final String TIMESTAMP = "timestamp"; 
-  private static final String USER_EMAIL = "userEmail";
-  private static final String NICKNAME = "nickname";
+  private static final String PROPERTY_NAME_QUOTE = "Quote";
+  private static final String PROPERTY_NAME_TEXT = "text";
+  private static final String PROPERTY_NAME_TIMESTAMP = "timestamp"; 
+  private static final String PROPERTY_NAME_USER_EMAIL = "userEmail";
+  private static final String PROPERTY_NAME_NICKNAME = "nickname";
 
   // Constants for information to be put into response of a GET request.
   private static final String IS_USER_LOGGED_IN = "loggedIn"; 
@@ -67,7 +67,7 @@ public class DataServlet extends HttpServlet {
       String logoutUrl = userService.createLogoutURL(HOME_URL);
 
       Optional<String> nicknameOptional = util.getUserNickname(datastore, currentUser.getUserId());
-      nicknameOptional.ifPresent(nickname -> responseMap.put(NICKNAME, nickname));
+      nicknameOptional.ifPresent(nickname -> responseMap.put(PROPERTY_NAME_NICKNAME, nickname));
       
       responseMap.put(IS_USER_LOGGED_IN, "true");
       responseMap.put(REDIRECT_URL_PARAM, logoutUrl); 
@@ -75,7 +75,7 @@ public class DataServlet extends HttpServlet {
       // Only display quotes if the user is logged in
       int numQuoteToDisplay = getNumQuoteDisplayed(request, DEFAULT_NUM_QUOTES);
       String quotesJson = getQuoteListJson(numQuoteToDisplay);
-      responseMap.put(QUOTE, quotesJson);
+      responseMap.put(PROPERTY_NAME_QUOTE, quotesJson);
     } else {
       String loginUrl = userService.createLoginURL(HOME_URL);
       responseMap.put(IS_USER_LOGGED_IN, "false");
@@ -121,13 +121,13 @@ public class DataServlet extends HttpServlet {
     if (quote.length() > 0) {
       long timestampMillis = System.currentTimeMillis();
 
-      Entity quoteEntity = new Entity(QUOTE);
-      quoteEntity.setProperty(TEXT, quote);
-      quoteEntity.setProperty(TIMESTAMP, timestampMillis);
-      quoteEntity.setProperty(USER_EMAIL, user.getEmail()); 
+      Entity quoteEntity = new Entity(PROPERTY_NAME_QUOTE);
+      quoteEntity.setProperty(PROPERTY_NAME_TEXT, quote);
+      quoteEntity.setProperty(PROPERTY_NAME_TIMESTAMP, timestampMillis);
+      quoteEntity.setProperty(PROPERTY_NAME_USER_EMAIL, user.getEmail()); 
 
       Optional<String> nicknameOptional = util.getUserNickname(datastore, user.getUserId());
-      nicknameOptional.ifPresent(nickname -> quoteEntity.setProperty(NICKNAME, nickname));
+      nicknameOptional.ifPresent(nickname -> quoteEntity.setProperty(PROPERTY_NAME_NICKNAME, nickname));
  
       datastore.put(quoteEntity);
     }
@@ -137,7 +137,7 @@ public class DataServlet extends HttpServlet {
    * Fetches quotes from Datastore and puts them into a list in JSON format. 
    */ 
   private String getQuoteListJson(int numQuoteToDisplay) {
-    Query query = new Query(QUOTE).addSort("timestamp", SortDirection.DESCENDING);
+    Query query = new Query(PROPERTY_NAME_QUOTE).addSort("timestamp", SortDirection.DESCENDING);
     PreparedQuery quotes = datastore.prepare(query);
    
     // Add each quote to the quote list whose content will be written as 
@@ -173,10 +173,10 @@ public class DataServlet extends HttpServlet {
    */ 
   private Quote extractQuoteFromEntity(Entity quoteEntity) {
     long quoteId = quoteEntity.getKey().getId();
-    String text = (String) quoteEntity.getProperty(TEXT);
-    long timestampMillis = (long) quoteEntity.getProperty(TIMESTAMP);
-    String userEmail = (String) quoteEntity.getProperty(USER_EMAIL); 
-    String nickname = (String) quoteEntity.getProperty(NICKNAME); 
+    String text = (String) quoteEntity.getProperty(PROPERTY_NAME_TEXT);
+    long timestampMillis = (long) quoteEntity.getProperty(PROPERTY_NAME_TIMESTAMP);
+    String userEmail = (String) quoteEntity.getProperty(PROPERTY_NAME_USER_EMAIL); 
+    String nickname = (String) quoteEntity.getProperty(PROPERTY_NAME_NICKNAME); 
     Quote newQuote = new Quote(quoteId, text, timestampMillis, userEmail, nickname);
     return newQuote; 
   } 

@@ -37,11 +37,11 @@ import java.util.Optional;
 @WebServlet("/nickname")
 public class NicknameServlet extends HttpServlet {
 
-  private static final String NICKNAME = "nickname";
-  private static final String USER_ID = "userId"; 
+  private static final String PROPERTY_NAME_NICKNAME = "nickname";
+  private static final String PROPERTY_NAME_USER_ID = "userId"; 
 
   // Constant for query type of UserInfo
-  private static final String USER_INFO = "UserInfo";
+  private static final String PROPERTY_NAME_USER_INFO = "UserInfo";
 
   // Constant for redirect URLs. 
   private static final String NICKNAME_URL = "/nickname";
@@ -87,12 +87,12 @@ public class NicknameServlet extends HttpServlet {
       return;
     }
 
-    String nickname = request.getParameter(NICKNAME);
+    String nickname = request.getParameter(PROPERTY_NAME_NICKNAME);
     String userId = userService.getCurrentUser().getUserId();
 
-    Entity entity = new Entity(USER_INFO, userId);
-    entity.setProperty(USER_ID, userId);
-    entity.setProperty(NICKNAME, nickname);
+    Entity entity = new Entity(PROPERTY_NAME_USER_INFO, userId);
+    entity.setProperty(PROPERTY_NAME_USER_ID, userId);
+    entity.setProperty(PROPERTY_NAME_NICKNAME, nickname);
 
     datastore.put(entity);
 

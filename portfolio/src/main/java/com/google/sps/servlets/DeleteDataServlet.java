@@ -41,8 +41,8 @@ import java.util.Optional;
 @WebServlet("/deleteQuote")
 public class DeleteDataServlet extends HttpServlet {
 
-  private static final String QUOTE = "Quote";
-  private static final String USER_EMAIL = "userEmail";
+  private static final String PROPERTY_NAME_QUOTE = "Quote";
+  private static final String PROPERTY_NAME_USER_EMAIL = "userEmail";
 
   // Global variable for an instance of the Util helper class
   private static Util util; 
@@ -60,14 +60,14 @@ public class DeleteDataServlet extends HttpServlet {
     UserService userService = UserServiceFactory.getUserService();
     String userEmail = userService.getCurrentUser().getEmail(); 
 
-    Query query = new Query(QUOTE);
+    Query query = new Query(PROPERTY_NAME_QUOTE);
     PreparedQuery quotes = datastore.prepare(query);
 
     // Only delete quotes that were submitted by the currently logged in user. 
     List<Key> keyList = new ArrayList<Key>();
     quotes.asIterable()
         .forEach((quoteEntity) -> {
-          if (quoteEntity.getProperty(USER_EMAIL).equals(userEmail)) {
+          if (quoteEntity.getProperty(PROPERTY_NAME_USER_EMAIL).equals(userEmail)) {
             keyList.add(quoteEntity.getKey());
           } 
         });
