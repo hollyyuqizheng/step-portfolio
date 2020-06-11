@@ -36,12 +36,10 @@ public final class Util {
     PreparedQuery results = datastore.prepare(query);
     Entity entity = results.asSingleEntity();
 
-    String nickname;
-    if (entity == null) {
-      nickname = null; 
-    } else {
+    String nickname = null;
+    if (entity != null) {
       nickname = (String) entity.getProperty("nickname");
-    } 
+    }
 
     Optional<String> nicknameOptional = Optional.ofNullable(nickname);
     return nicknameOptional;
