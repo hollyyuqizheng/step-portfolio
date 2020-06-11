@@ -27,6 +27,7 @@ import com.google.appengine.api.datastore.DatastoreServiceConfig;
 import com.google.appengine.api.datastore.DatastoreServiceConfig.Builder;  
 import com.google.appengine.api.datastore.ReadPolicy;
 import com.google.appengine.api.datastore.ReadPolicy.Consistency;
+import com.google.sps.data.Util; 
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -34,6 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List; 
 import java.util.ArrayList; 
+import java.util.Optional;
 
 /** Servlet responsible for deleting all quotes in Datastore. */
 @WebServlet("/deleteQuote")
@@ -42,12 +44,22 @@ public class DeleteDataServlet extends HttpServlet {
   private static final String QUOTE = "Quote";
   private static final String USER_EMAIL = "userEmail";
 
+  // Global variable for an instance of the Util helper class
+  private static Util util; 
+  
+  // Global variable for an instance of DatastoreService
+  private static DatastoreService datastore; 
+
+  public DeleteDataServlet() {
+    util = new Util();
+    datastore = util.getDatastoreServiceWithConsistency(); 
+  }
+
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
     String userEmail = userService.getCurrentUser().getEmail(); 
 
-    DatastoreService datastore = getDatastoreServiceWithConsistency();
     Query query = new Query(QUOTE);
     PreparedQuery quotes = datastore.prepare(query);
 
@@ -61,17 +73,5 @@ public class DeleteDataServlet extends HttpServlet {
         });
 
     datastore.delete(keyList);
-  }
-
-  /**
-   * Sets up strong consistency for datastore service. 
-   * This strong consistency ensures that freshness is more important than availability
-   * so that the most up-to-date data is returned and displayed on the page.
-   */ 
-  private DatastoreService getDatastoreServiceWithConsistency() { 
-    DatastoreServiceConfig datastoreConfig = 
-        DatastoreServiceConfig.Builder.withReadPolicy(new ReadPolicy(Consistency.STRONG)).deadline(5.0);
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService(datastoreConfig);
-    return datastore; 
   }
 }

@@ -25,19 +25,38 @@ import com.google.appengine.api.datastore.DatastoreServiceConfig;
 import com.google.appengine.api.datastore.DatastoreServiceConfig.Builder;  
 import com.google.appengine.api.datastore.ReadPolicy;
 import com.google.appengine.api.datastore.ReadPolicy.Consistency;
+import com.google.sps.data.Util; 
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional; 
 
 @WebServlet("/nickname")
 public class NicknameServlet extends HttpServlet {
 
+  private static final String NICKNAME = "nickname";
+  private static final String USER_ID = "userId"; 
+
+  // Constant for query type of UserInfo
+  private static final String USER_INFO = "UserInfo";
+
+  // Constant for redirect URLs. 
+  private static final String NICKNAME_URL = "/nickname";
+  private static final String INDEX_URL = "/index.html";
+
+  // Global variable for an instance of DatastoreService
+  private static DatastoreService datastore; 
+
+  public NicknameServlet() {
+    Util util = new Util();
+    datastore = util.getDatastoreServiceWithConsistency(); 
+  }
+
   /**
-   * Handles GET request. If the user is logged in, displays a page for them to input 
-   * nickname. This servlet will only be sent a request to if the logged in user 
+   * Handles GET request. This servlet will only be sent a request to if the logged in user 
    * does not yet have a nickname.
    */ 
   @Override
@@ -47,10 +66,10 @@ public class NicknameServlet extends HttpServlet {
     out.println("<h1>Set Nickname</h1>");
 
     UserService userService = UserServiceFactory.getUserService();
-    String nickname = getUserNickname(userService.getCurrentUser().getUserId());
+
     out.println("<p>Set your nickname here:</p>");
     out.println("<form method=\"POST\" action=\"/nickname\">");
-    out.println("<input name=\"nickname\" value=\"" + nickname + "\" />");
+    out.println("<input name=\"nickname\" />");
     out.println("<br/>");
     out.println("<button>Submit</button>");
     out.println("</form>");
@@ -64,49 +83,19 @@ public class NicknameServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
     if (!userService.isUserLoggedIn()) {
-      response.sendRedirect("/nickname");
+      response.sendRedirect(NICKNAME_URL);
       return;
     }
 
-    String nickname = request.getParameter("nickname");
+    String nickname = request.getParameter(NICKNAME);
     String userId = userService.getCurrentUser().getUserId();
 
-    DatastoreService datastore = getDatastoreServiceWithConsistency();
-    Entity entity = new Entity("UserInfo", userId);
-    entity.setProperty("userId", userId);
-    entity.setProperty("nickname", nickname);
+    Entity entity = new Entity(USER_INFO, userId);
+    entity.setProperty(USER_ID, userId);
+    entity.setProperty(NICKNAME, nickname);
 
     datastore.put(entity);
 
-    response.sendRedirect("/index.html");
-  }
-
-  /**
-   * Returns the nickname of the user with id, or null if the user has not set a nickname.
-   */
-  private String getUserNickname(String userId) {
-    DatastoreService datastore = getDatastoreServiceWithConsistency();
-    Query query =
-        new Query("UserInfo")
-            .setFilter(new Query.FilterPredicate("userId", Query.FilterOperator.EQUAL, userId));
-    PreparedQuery results = datastore.prepare(query);
-    Entity entity = results.asSingleEntity();
-    if (entity == null) {
-      return null;
-    }
-    String nickname = (String) entity.getProperty("nickname");
-    return nickname;
-  }
-
-  /**
-   * Sets up strong consistency for datastore service. 
-   * This strong consistency ensures that freshness is more important than availability
-   * so that the most up-to-date data is returned and displayed on the page.
-   */ 
-  private DatastoreService getDatastoreServiceWithConsistency() { 
-    DatastoreServiceConfig datastoreConfig = 
-        DatastoreServiceConfig.Builder.withReadPolicy(new ReadPolicy(Consistency.STRONG)).deadline(5.0);
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService(datastoreConfig);
-    return datastore; 
+    response.sendRedirect(INDEX_URL);
   }
 }

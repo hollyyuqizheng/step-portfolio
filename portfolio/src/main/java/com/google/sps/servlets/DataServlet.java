@@ -4,17 +4,13 @@ import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.FetchOptions;
-import com.google.appengine.api.datastore.DatastoreServiceConfig;
-import com.google.appengine.api.datastore.DatastoreServiceConfig.Builder;  
-import com.google.appengine.api.datastore.ReadPolicy;
-import com.google.appengine.api.datastore.ReadPolicy.Consistency;
 import com.google.sps.data.Quote; 
+import com.google.sps.data.Util; 
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -25,11 +21,13 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map; 
 import java.util.HashMap; 
+import java.util.Optional;
 
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
   private static final String QUOTE = "Quote";
+  private static final String INDEX_URL = "/index.html"; 
 
   // Constants for property of a Quote item in Datastore.
   private static final String TEXT = "text";
@@ -39,11 +37,22 @@ public class DataServlet extends HttpServlet {
 
   // Constants for information to be put into response of a GET request.
   private static final String IS_USER_LOGGED_IN = "loggedIn"; 
-  private static final String REDIRECT_URL = "redirectUrl";
+  private static final String REDIRECT_URL_PARAM = "redirectUrl";
   private static final String HOME_URL = "/"; 
 
   // Constant for fetching quotes from Datastore
   private static final int DEFAULT_NUM_QUOTES = 5;
+
+  // Global variable for an instance of the Util helper class
+  private static Util util; 
+  
+  // Global variable for an instance of DatastoreService
+  private static DatastoreService datastore; 
+
+  public DataServlet() {
+    util = new Util();
+    datastore = util.getDatastoreServiceWithConsistency(); 
+  }
   
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -56,19 +65,21 @@ public class DataServlet extends HttpServlet {
 
     if (userService.isUserLoggedIn()) {
       String logoutUrl = userService.createLogoutURL(HOME_URL);
-      String nickname = getUserNickname(currentUser.getUserId());  
 
+      Optional<String> nicknameOptional = util.getUserNickname(datastore, currentUser.getUserId());
+      nicknameOptional.ifPresent(nickname -> responseMap.put(NICKNAME, nickname));
+      
       responseMap.put(IS_USER_LOGGED_IN, "true");
-      responseMap.put(REDIRECT_URL, logoutUrl); 
-      responseMap.put(NICKNAME, nickname); 
+      responseMap.put(REDIRECT_URL_PARAM, logoutUrl); 
 
       // Only display quotes if the user is logged in
-      String quotesJson = getQuoteListJson(request);
+      int numQuoteToDisplay = getNumQuoteDisplayed(request, DEFAULT_NUM_QUOTES);
+      String quotesJson = getQuoteListJson(numQuoteToDisplay);
       responseMap.put(QUOTE, quotesJson);
     } else {
       String loginUrl = userService.createLoginURL(HOME_URL);
       responseMap.put(IS_USER_LOGGED_IN, "false");
-      responseMap.put(REDIRECT_URL, loginUrl); 
+      responseMap.put(REDIRECT_URL_PARAM, loginUrl); 
     }
 
     Gson gson = new Gson();
@@ -85,20 +96,8 @@ public class DataServlet extends HttpServlet {
       putQuoteIntoDatastore(request, currentUser);
     } 
 
-    response.sendRedirect("/index.html");
+    response.sendRedirect(INDEX_URL);
   } 
-
-  /**
-   * Sets up strong consistency for datastore service. 
-   * This strong consistency ensures that freshness is more important than availability
-   * so that the most up-to-date data is returned and displayed on the page.
-   */ 
-  private DatastoreService getDatastoreServiceWithConsistency() { 
-    DatastoreServiceConfig datastoreConfig = 
-        DatastoreServiceConfig.Builder.withReadPolicy(new ReadPolicy(Consistency.STRONG)).deadline(5.0);
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService(datastoreConfig);
-    return datastore; 
-  }
 
   /**
    * Takes in an ArrayList of quotes and converts it into a string 
@@ -126,9 +125,10 @@ public class DataServlet extends HttpServlet {
       quoteEntity.setProperty(TEXT, quote);
       quoteEntity.setProperty(TIMESTAMP, timestampMillis);
       quoteEntity.setProperty(USER_EMAIL, user.getEmail()); 
-      quoteEntity.setProperty(NICKNAME, getUserNickname(user.getUserId()));
 
-      DatastoreService datastore = getDatastoreServiceWithConsistency();
+      Optional<String> nicknameOptional = util.getUserNickname(datastore, user.getUserId());
+      nicknameOptional.ifPresent(nickname -> quoteEntity.setProperty(NICKNAME, nickname));
+ 
       datastore.put(quoteEntity);
     }
   }
@@ -136,13 +136,9 @@ public class DataServlet extends HttpServlet {
   /**
    * Fetches quotes from Datastore and puts them into a list in JSON format. 
    */ 
-  private String getQuoteListJson(HttpServletRequest request) {
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+  private String getQuoteListJson(int numQuoteToDisplay) {
     Query query = new Query(QUOTE).addSort("timestamp", SortDirection.DESCENDING);
     PreparedQuery quotes = datastore.prepare(query);
-
-    // Get the parameter for number to display.
-    int numQuoteToDisplay = getNumQuoteDisplayed(request, DEFAULT_NUM_QUOTES);
    
     // Add each quote to the quote list whose content will be written as 
     // the response from the servlet. 
@@ -185,20 +181,4 @@ public class DataServlet extends HttpServlet {
     return newQuote; 
   } 
 
-  /**
-   * Returns the nickname of the user with id, or null if the user has not set a nickname.
-   */
-  private String getUserNickname(String userId) {
-    DatastoreService datastore = getDatastoreServiceWithConsistency();
-    Query query =
-        new Query("UserInfo")
-            .setFilter(new Query.FilterPredicate("userId", Query.FilterOperator.EQUAL, userId));
-    PreparedQuery results = datastore.prepare(query);
-    Entity entity = results.asSingleEntity();
-    if (entity == null) {
-      return null;
-    }
-    String nickname = (String) entity.getProperty("nickname");
-    return nickname;
-  }
 }

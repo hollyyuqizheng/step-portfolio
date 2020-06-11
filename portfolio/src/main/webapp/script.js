@@ -111,7 +111,7 @@ function getQuotes() {
     .then(response => response.json())
     .then((responseJson) => {
       updateLoginStatusElements(responseJson);
-      if (responseJson['Quote'] !== undefined) {
+      if (responseJson['Quote']) {
         const quotesJson = JSON.parse(responseJson['Quote']);
         createQuotesList(quotesJson);
       }      
@@ -122,7 +122,7 @@ function getQuotes() {
  * Creates a list for all fetched quotes from the GET request. 
  */
 function createQuotesList(quotesJson) {
-  if (quotesJson !== null) {
+  if (quotesJson) {
     const quoteListElement = document.getElementById('quoteWrapper');
     quoteListElement.innerHTML = '';
 
@@ -140,8 +140,9 @@ function createQuotesList(quotesJson) {
 function createQuotesListElement(quote) {
   const liElement = document.createElement('li');
   const nickname = quote.nickname;  
+  console.log(nickname);
 
-  if (nickname === undefined) {
+  if (!nickname) {
     liElement.innerText = quote.text.concat(' -- unknown user');
   } else {
     liElement.innerText = quote.text.concat(' -- ').concat(nickname);
@@ -209,4 +210,8 @@ function cleanData() {
 function refreshQuotes() {
   const quoteListElement = document.getElementById('quoteWrapper');
   quoteListElement.innerHTML = '';
+
+  // Re-fetching all current quotes from Datastrore after deleting visually.
+  // This ensures that quotes that are not deleted are shown on the page again. 
+  getQuotes(); 
 }
