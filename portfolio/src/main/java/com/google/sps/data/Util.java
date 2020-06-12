@@ -14,6 +14,10 @@ import java.util.Optional;
 
 public final class Util {
 
+  private static final String PROPERTY_NAME_USER_ID = "userId"; 
+  private static final String PROPERTY_NAME_USER_INFO = "UserInfo"; 
+  private static final String PROPERTY_NAME_NICKNAME = "nickname"; 
+
   /**
    * Sets up strong consistency for datastore service. 
    * This strong consistency ensures that freshness is more important than availability
@@ -31,14 +35,14 @@ public final class Util {
    */
   public Optional<String> getUserNickname(DatastoreService datastore, String userId) {
     Query query =
-        new Query("UserInfo")
-            .setFilter(new Query.FilterPredicate("userId", Query.FilterOperator.EQUAL, userId));
+        new Query(PROPERTY_NAME_USER_INFO)
+            .setFilter(new Query.FilterPredicate(PROPERTY_NAME_USER_ID, Query.FilterOperator.EQUAL, userId));
     PreparedQuery results = datastore.prepare(query);
     Entity entity = results.asSingleEntity();
 
     String nickname = null;
     if (entity != null) {
-      nickname = (String) entity.getProperty("nickname");
+      nickname = (String) entity.getProperty(PROPERTY_NAME_NICKNAME);
     }
 
     Optional<String> nicknameOptional = Optional.ofNullable(nickname);
