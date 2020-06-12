@@ -31,13 +31,11 @@ public class MarkerServlet extends HttpServlet {
   private static final String PROPERTY_NAME_CONTENT = "content";
   private static final String PROPERTY_NAME_NICKNAME = "nickname";
   
-  // Global variable for an instance of Util and DatastoreService
-  private static Util util; 
+  // Global variable for an instance of DatastoreService
   private static DatastoreService datastore; 
 
   public MarkerServlet() {
-    util = new Util();
-    datastore = util.getDatastoreServiceWithConsistency(); 
+    datastore = Util.getDatastoreServiceWithConsistency(); 
   }
 
   /** Responds with a JSON array containing marker data. */
@@ -87,7 +85,7 @@ public class MarkerServlet extends HttpServlet {
     markerEntity.setProperty(PROPERTY_NAME_CONTENT, markerContent);
 
     UserService userService = UserServiceFactory.getUserService();
-    Optional<String> nicknameOptional = util.getUserNickname(datastore, userService.getCurrentUser().getUserId());
+    Optional<String> nicknameOptional = Util.getUserNickname(datastore, userService.getCurrentUser().getUserId());
     nicknameOptional.ifPresent(nickname -> markerEntity.setProperty(PROPERTY_NAME_NICKNAME, nickname));
 
     datastore.put(markerEntity);

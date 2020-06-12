@@ -112,7 +112,7 @@ function createUserMarkerForDisplay(markerJson) {
   createUserInfoWindow(map, marker, markerJson.content); 
 }
 
-/** Creates the info window for a marker created by the user */
+/** Creates the info window for a marker created by the user. */
 function createUserInfoWindow (map, marker, content) {
   const infowindow = new google.maps.InfoWindow({
     content: content 

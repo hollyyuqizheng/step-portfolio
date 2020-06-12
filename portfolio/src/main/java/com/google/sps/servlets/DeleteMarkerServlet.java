@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List; 
 import java.util.ArrayList; 
 
-/** Servlet responsible for deleting tasks. */
+/** Servlet responsible for deleting map markers. */
 @WebServlet("/deleteMarker")
 public class DeleteMarkerServlet extends HttpServlet {
 
@@ -25,8 +25,7 @@ public class DeleteMarkerServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Util util = new Util();
-    DatastoreService datastore = util.getDatastoreServiceWithConsistency(); 
+    DatastoreService datastore = Util.getDatastoreServiceWithConsistency(); 
 
     Query query = new Query(PROPERTY_NAME_MARKER);
     PreparedQuery markers = datastore.prepare(query);
