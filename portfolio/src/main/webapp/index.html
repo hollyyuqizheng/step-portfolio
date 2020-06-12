@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <title>Holly's Portfolio</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBCc7dCxKF2LSSqlOxjLpcE6RWHTogBn0U"></script>
     <script src="script.js"></script>
   </head>
-  <body onload="getQuotes()">
+  <body onload="createMap(); getQuotes()">
     <div id="pageWrapper">
       <div id="navbar">
         <div class="navButton" onClick="highlightSection('basicInfo')">Introduction</div> 
@@ -64,35 +65,46 @@
 
       <div id="surveyWrapper">
         <h2>I'm always down to chat!</h2> 
-        <form action="/data" method="POST">
-          <span>
-            Please tell me one of your favorite quotes from books or movies:
-            <input type="text" name="quote">
-            <input type="submit" />
-          </span>
-          <br>      
-        </form>
+        <h2 id="loginText">Please log in first</h2>
 
-        <form action="/data" method="GET">
-          <span>
-            The quotes you have entered will be posted here. 
-            What is the maximum number of quotes you'd like to see?  
-            <label for="numToDisplay">Choose a number:</label>
-            <select name="numToDisplay" id="numToDisplay" onchange="getQuotes()">
-              <option type="number" value="3">3</option>
-              <option type="number" value="5" selected>5</option>
-              <option type="number" value="10">10</option>
-            </select>
-          </span>
-        </form> 
+        <div id="showAfterLogin">
+          <form action="/data" method="POST">
+            <span id="submitQuoteForm">
+              Please tell me one of your favorite quotes from books or movies:
+              <input type="text" name="quote">
+              <input type="submit" />
+            </span>
+            <br>      
+          </form>
 
-        <ol id="quoteWrapper"></ol>
-        <button id="refreshQuotesButton" onclick="cleanData()">Delete all quotes</button>  
+          <form action="/data" method="GET">
+            <span id="changeQuoteNumForm">
+              The quotes you have entered will be posted here. 
+              What is the maximum number of quotes you'd like to see?  
+              <label for="numToDisplay">Choose a number:</label>
+              <select name="numToDisplay" id="numToDisplay" onchange="getQuotes()">
+                <option type="number" value="3">3</option>
+                <option type="number" value="5" selected>5</option>
+                <option type="number" value="10">10</option>
+              </select>
+            </span>
+          </form> 
+
+          <ol id="quoteWrapper"></ol>
+          <button id="refreshQuotesButton" onclick="cleanData()">Delete all quotes</button>  
+        </div>
       </div> 
 
       <div id="loginWrapper">
-        <h2>Log in here</h2>
+        <h2 id="loginStatus"></h2>
+        <h2><a id="redirectText"></a></h2>   
+        <h2 id="createNickname">You don't have a nickname yet. Create one <a href="/nickname">here</a>.</h2>
       </div>
+
+      <div id="mapWrapper">
+        <h2>Here's a map</h2>
+        <div id="simpleMap"></div>
+      </div> 
 
       <div id="footer">
         <p>Designed for STEP weeks 2-5 project. Holly Zheng. 2020.</p> 

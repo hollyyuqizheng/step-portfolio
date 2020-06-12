@@ -1,59 +1,139 @@
-// Copyright 2019 Google LLC
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     https://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 package com.google.sps.servlets;
 
+import com.google.appengine.api.users.User; 
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.datastore.FetchOptions;
+import com.google.sps.data.Quote; 
+import com.google.sps.data.Util; 
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.PreparedQuery;
-import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.Query.SortDirection;
-import com.google.appengine.api.datastore.FetchOptions; 
-import com.google.appengine.api.datastore.FetchOptions.Builder; 
 import com.google.gson.Gson;
-import com.google.sps.data.Quote; 
 import java.util.List; 
-import java.util.ArrayList; 
+import java.util.ArrayList;
+import java.util.Map; 
+import java.util.HashMap; 
+import java.util.Optional;
 
-/** Servlet that returns some example content. */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-  private static final String QUOTE = "Quote";
-  private static final String TEXT = "text";
-  private static final String TIMESTAMP = "timestamp"; 
+  // Constants for URL links. 
+  private static final String INDEX_URL = "/index.html"; 
+  private static final String HOME_URL = "/"; 
+
+  // Constants for property of a Quote item in Datastore.
+  private static final String PROPERTY_NAME_QUOTE = "Quote";
+  private static final String PROPERTY_NAME_TEXT = "text";
+  private static final String PROPERTY_NAME_TIMESTAMP = "timestamp"; 
+  private static final String PROPERTY_NAME_USER_EMAIL = "userEmail";
+  private static final String PROPERTY_NAME_NICKNAME = "nickname";
+
+  // Constants for information to be put into response of a GET request.
+  private static final String IS_USER_LOGGED_IN_PARAM = "loggedIn"; 
+  private static final String REDIRECT_URL_PARAM = "redirectUrl";
+  
+  // Constant for fetching quotes from Datastore
   private static final int DEFAULT_NUM_QUOTES = 5;
 
-  /**
-    * Retrives all quotes that are stored in Datastore
-    * and puts them into a list of quotes. This list is then written
-    * as the response from the server. 
-    */
+  // Global variable for an instance of DatastoreService
+  private static DatastoreService datastore; 
+
+  public DataServlet() {
+    datastore = Util.getDatastoreServiceWithConsistency(); 
+  }
+  
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Query query = new Query(QUOTE).addSort(TIMESTAMP, SortDirection.DESCENDING);
-    PreparedQuery quotes = datastore.prepare(query);
+    response.setContentType("application/json");
 
-    // Get the parameter for number to display, with 5 as the default value.
-    int numQuoteToDisplay = getNumQuoteDisplayed(request, DEFAULT_NUM_QUOTES);
+    UserService userService = UserServiceFactory.getUserService();
+
+    Map<String, String> responseMap = new HashMap<String, String>();
+    User currentUser = userService.getCurrentUser(); 
+
+    if (userService.isUserLoggedIn()) {
+      String logoutUrl = userService.createLogoutURL(HOME_URL);
+
+      Optional<String> nicknameOptional = Util.getUserNickname(datastore, currentUser.getUserId());
+      nicknameOptional.ifPresent(nickname -> responseMap.put(PROPERTY_NAME_NICKNAME, nickname));
+      
+      responseMap.put(IS_USER_LOGGED_IN_PARAM, "true");
+      responseMap.put(REDIRECT_URL_PARAM, logoutUrl); 
+
+      // Only display quotes if the user is logged in
+      int numQuoteToDisplay = getNumQuoteDisplayed(request, DEFAULT_NUM_QUOTES);
+      String quotesJson = getQuoteListJson(numQuoteToDisplay);
+      responseMap.put(PROPERTY_NAME_QUOTE, quotesJson);
+    } else {
+      String loginUrl = userService.createLoginURL(HOME_URL);
+      responseMap.put(IS_USER_LOGGED_IN_PARAM, "false");
+      responseMap.put(REDIRECT_URL_PARAM, loginUrl); 
+    }
+
+    Gson gson = new Gson();
+    response.getWriter().println(gson.toJson(responseMap)); 
+  }
+
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    response.setContentType("application/json");
+    UserService userService = UserServiceFactory.getUserService();
+
+    if (userService.isUserLoggedIn()) {
+      User currentUser = userService.getCurrentUser(); 
+      putQuoteIntoDatastore(request, currentUser);
+    } 
+
+    response.sendRedirect(INDEX_URL);
+  } 
+
+  /**
+   * Takes in an ArrayList of quotes and converts it into a string 
+   * that is in JSON format. 
+   * @param a list of quotes
+   * @return the quote list formated as a JSON string
+   */ 
+  private String convertQuotesToJson(List<Quote> quoteList) {  
+    Gson gson = new Gson();
+    String json = gson.toJson(quoteList);
+    return json;
+  }
+
+  /**
+   * Creates a new entity for each quote and puts each new quote into Datastore. 
+   */ 
+  private void putQuoteIntoDatastore(HttpServletRequest request, User user) {
+    String quote = request.getParameter("quote");   
+    if (quote.length() > 0) {
+      long timestampMillis = System.currentTimeMillis();
+
+      Entity quoteEntity = new Entity(PROPERTY_NAME_QUOTE);
+      quoteEntity.setProperty(PROPERTY_NAME_TEXT, quote);
+      quoteEntity.setProperty(PROPERTY_NAME_TIMESTAMP, timestampMillis);
+      quoteEntity.setProperty(PROPERTY_NAME_USER_EMAIL, user.getEmail()); 
+
+      Optional<String> nicknameOptional = Util.getUserNickname(datastore, user.getUserId());
+      nicknameOptional.ifPresent(nickname -> quoteEntity.setProperty(PROPERTY_NAME_NICKNAME, nickname));
+ 
+      datastore.put(quoteEntity);
+    }
+  }
+
+  /**
+   * Fetches quotes from Datastore and puts them into a list in JSON format. 
+   */ 
+  private String getQuoteListJson(int numQuoteToDisplay) {
+    Query query = new Query(PROPERTY_NAME_QUOTE).addSort("timestamp", SortDirection.DESCENDING);
+    PreparedQuery quotes = datastore.prepare(query);
    
     // Add each quote to the quote list whose content will be written as 
     // the response from the servlet. 
@@ -62,82 +142,9 @@ public class DataServlet extends HttpServlet {
         .forEach((quoteEntity) -> {
           quoteList.add(extractQuoteFromEntity(quoteEntity));
         });
-    
-    // Put the thread to sleep for a short period of time.
-    // This adds buffer time for querying Datastore. 
-    try {
-      Thread.sleep(200);
-    } catch (Exception e) {
-      System.out.println(e);
-    }
 
-    String quotesJson = convertToJson(quoteList);
-    response.setContentType("application/json");
-    response.getWriter().println(quotesJson); 
-  }
-
-  /**
-   * Receives the quote that the user has inputed in the survey bar.
-   * This new quote is changed into an Entity that is put into Datastore.
-   * Each quote entity has a "text" and a "timstamp" field. 
-   */ 
-  @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {    
-    String quote = request.getParameter("quote");
-
-    // Only update the new quote if it is not an empty string. 
-    if (quote.length() > 0) {
-      long timestampMillis = System.currentTimeMillis();
-
-      Entity quoteEntity = new Entity(QUOTE);
-      quoteEntity.setProperty(TEXT, quote);
-      quoteEntity.setProperty(TIMESTAMP, timestampMillis);
-
-      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-      datastore.put(quoteEntity);
-    }
-    
-    response.sendRedirect("/index.html");
-  }
-
-  /**
-   * Extracts the attributes of a quoteEntity and puts them into a new
-   * instance of Quote. 
-   */ 
-  private Quote extractQuoteFromEntity(Entity quoteEntity) {
-    long id = quoteEntity.getKey().getId();
-    String text = (String) quoteEntity.getProperty(TEXT);
-    long timestampMillis = (long) quoteEntity.getProperty(TIMESTAMP);
-    Quote newQuote = new Quote(id, text, timestampMillis);
-    return newQuote; 
-  }
-
-  /**
-   * Handles the returning of request parameter. 
-   * @param request: the request from the survey
-            name: the request parameter, which corresponds to a specific entry of the survey
-            defaultValue: a default value for this survey entry's input
-   * @return the request parameter, or the default value if the parameter
-   *         was not specified by the client
-   */ 
-  private String getParameter(HttpServletRequest request, String name, String defaultValue) {
-    String value = request.getParameter(name);
-    if (value == null) {
-      return defaultValue;
-    }
-    return value;
-  }
-
-  /**
-   * Takes in an ArrayList of quotes and converts it into a string 
-   * that is in JSON format. 
-   * @param a list of quotes
-   * @return the quote list formated as a JSON string
-   */ 
-  private String convertToJson(List<Quote> quoteList) {  
-    Gson gson = new Gson();
-    String json = gson.toJson(quoteList);
-    return json;
+    String quotesJson = convertQuotesToJson(quoteList);
+    return quotesJson; 
   }
 
   /**
@@ -154,4 +161,19 @@ public class DataServlet extends HttpServlet {
       return defaultNumToDisplay; 
     }
   }
+
+  /**
+   * Extracts the attributes of a quoteEntity and puts them into a new
+   * instance of Quote. 
+   */ 
+  private Quote extractQuoteFromEntity(Entity quoteEntity) {
+    long quoteId = quoteEntity.getKey().getId();
+    String text = (String) quoteEntity.getProperty(PROPERTY_NAME_TEXT);
+    long timestampMillis = (long) quoteEntity.getProperty(PROPERTY_NAME_TIMESTAMP);
+    String userEmail = (String) quoteEntity.getProperty(PROPERTY_NAME_USER_EMAIL); 
+    String nickname = (String) quoteEntity.getProperty(PROPERTY_NAME_NICKNAME); 
+    Quote newQuote = new Quote(quoteId, text, timestampMillis, userEmail, nickname);
+    return newQuote; 
+  } 
+
 }

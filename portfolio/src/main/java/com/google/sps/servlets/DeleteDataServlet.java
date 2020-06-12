@@ -14,6 +14,8 @@
 
 package com.google.sps.servlets;
 
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Key;
@@ -21,7 +23,11 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions; 
-import com.google.appengine.api.datastore.FetchOptions.Builder; 
+import com.google.appengine.api.datastore.DatastoreServiceConfig;
+import com.google.appengine.api.datastore.DatastoreServiceConfig.Builder;  
+import com.google.appengine.api.datastore.ReadPolicy;
+import com.google.appengine.api.datastore.ReadPolicy.Consistency;
+import com.google.sps.data.Util; 
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -29,23 +35,37 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List; 
 import java.util.ArrayList; 
+import java.util.Optional;
 
 /** Servlet responsible for deleting all quotes in Datastore. */
 @WebServlet("/deleteQuote")
 public class DeleteDataServlet extends HttpServlet {
 
-  private static final String QUOTE = "Quote";
+  private static final String PROPERTY_NAME_QUOTE = "Quote";
+  private static final String PROPERTY_NAME_USER_EMAIL = "userEmail";
+  
+  // Global variable for an instance of DatastoreService
+  private static DatastoreService datastore; 
+
+  public DeleteDataServlet() {
+    datastore = Util.getDatastoreServiceWithConsistency(); 
+  }
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Query query = new Query(QUOTE);
+    UserService userService = UserServiceFactory.getUserService();
+    String userEmail = userService.getCurrentUser().getEmail(); 
+
+    Query query = new Query(PROPERTY_NAME_QUOTE);
     PreparedQuery quotes = datastore.prepare(query);
 
+    // Only delete quotes that were submitted by the currently logged in user. 
     List<Key> keyList = new ArrayList<Key>();
     quotes.asIterable()
         .forEach((quoteEntity) -> {
-          keyList.add(quoteEntity.getKey());
+          if (quoteEntity.getProperty(PROPERTY_NAME_USER_EMAIL).equals(userEmail)) {
+            keyList.add(quoteEntity.getKey());
+          } 
         });
 
     datastore.delete(keyList);
