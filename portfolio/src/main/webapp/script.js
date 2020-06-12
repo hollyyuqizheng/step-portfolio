@@ -152,21 +152,31 @@ function createQuotesListElement(quote) {
  * Updates divs and texts on the UI according to the user's login status. 
  */
 function updateLoginStatusElements(responseJson) {
-  const showAfterLogin = document.getElementById('showAfterLogin'); 
+  // Divs for quotes and map marker submission sections
+  const showAfterLoginQuotes = document.getElementById('showAfterLoginQuotes'); 
+  const showAfterLoginMap = document.getElementById('showAfterLoginMap'); 
+
+  // Headers that contain signs for "Please log in first"
   const loginText = document.getElementById('loginText');
+  const loginTextMap = document.getElementById('loginTextMap');
+
   const loginStatus = document.getElementById('loginStatus'); 
   const redirectText = document.getElementById('redirectText');
   redirectText.href = responseJson['redirectUrl'];
 
   const status = responseJson['loggedIn'];
   if (status === 'true') {
-    showAfterLogin.style.visibility = 'visible';
+    showAfterLoginQuotes.style.visibility = 'visible';
+    showAfterLoginMap.style.visibility = 'visible';
     loginText.style.visibility = 'hidden';
+    loginTextMap.style.visibility = 'hidden';
     redirectText.innerText = 'Log out ';
     handleNicknameDisplay(responseJson);  
   } else {
-    showAfterLogin.style.visibility = 'hidden';
+    showAfterLoginQuotes.style.visibility = 'hidden';
+    showAfterLoginMap.style.visibility = 'hidden';
     loginText.style.visibility = 'visible';
+    loginTextMap.style.visibility = 'visible';
     loginStatus.innerText = 'Not logged in yet';
     redirectText.innerText = 'Log in ';    
   }     
@@ -209,7 +219,7 @@ function refreshQuotes() {
   const quoteListElement = document.getElementById('quoteWrapper');
   quoteListElement.innerHTML = '';
 
-  // Re-fetching all current quotes from Datastrore after deleting visually.
+  // Refetches all current quotes from Datastrore after deleting visually.
   // This ensures that quotes that are not deleted are shown on the page again. 
   getQuotes(); 
 }

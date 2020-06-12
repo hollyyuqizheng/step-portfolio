@@ -43,16 +43,12 @@ public class DeleteDataServlet extends HttpServlet {
 
   private static final String PROPERTY_NAME_QUOTE = "Quote";
   private static final String PROPERTY_NAME_USER_EMAIL = "userEmail";
-
-  // Global variable for an instance of the Util helper class
-  private static Util util; 
   
   // Global variable for an instance of DatastoreService
   private static DatastoreService datastore; 
 
   public DeleteDataServlet() {
-    util = new Util();
-    datastore = util.getDatastoreServiceWithConsistency(); 
+    datastore = Util.getDatastoreServiceWithConsistency(); 
   }
 
   @Override

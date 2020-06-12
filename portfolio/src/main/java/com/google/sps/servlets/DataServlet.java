@@ -26,7 +26,9 @@ import java.util.Optional;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
+  // Constants for URL links. 
   private static final String INDEX_URL = "/index.html"; 
+  private static final String HOME_URL = "/"; 
 
   // Constants for property of a Quote item in Datastore.
   private static final String PROPERTY_NAME_QUOTE = "Quote";
@@ -36,22 +38,17 @@ public class DataServlet extends HttpServlet {
   private static final String PROPERTY_NAME_NICKNAME = "nickname";
 
   // Constants for information to be put into response of a GET request.
-  private static final String IS_USER_LOGGED_IN = "loggedIn"; 
+  private static final String IS_USER_LOGGED_IN_PARAM = "loggedIn"; 
   private static final String REDIRECT_URL_PARAM = "redirectUrl";
-  private static final String HOME_URL = "/"; 
-
+  
   // Constant for fetching quotes from Datastore
   private static final int DEFAULT_NUM_QUOTES = 5;
 
-  // Global variable for an instance of the Util helper class
-  private static Util util; 
-  
   // Global variable for an instance of DatastoreService
   private static DatastoreService datastore; 
 
   public DataServlet() {
-    util = new Util();
-    datastore = util.getDatastoreServiceWithConsistency(); 
+    datastore = Util.getDatastoreServiceWithConsistency(); 
   }
   
   @Override
@@ -66,10 +63,10 @@ public class DataServlet extends HttpServlet {
     if (userService.isUserLoggedIn()) {
       String logoutUrl = userService.createLogoutURL(HOME_URL);
 
-      Optional<String> nicknameOptional = util.getUserNickname(datastore, currentUser.getUserId());
+      Optional<String> nicknameOptional = Util.getUserNickname(datastore, currentUser.getUserId());
       nicknameOptional.ifPresent(nickname -> responseMap.put(PROPERTY_NAME_NICKNAME, nickname));
       
-      responseMap.put(IS_USER_LOGGED_IN, "true");
+      responseMap.put(IS_USER_LOGGED_IN_PARAM, "true");
       responseMap.put(REDIRECT_URL_PARAM, logoutUrl); 
 
       // Only display quotes if the user is logged in
@@ -78,7 +75,7 @@ public class DataServlet extends HttpServlet {
       responseMap.put(PROPERTY_NAME_QUOTE, quotesJson);
     } else {
       String loginUrl = userService.createLoginURL(HOME_URL);
-      responseMap.put(IS_USER_LOGGED_IN, "false");
+      responseMap.put(IS_USER_LOGGED_IN_PARAM, "false");
       responseMap.put(REDIRECT_URL_PARAM, loginUrl); 
     }
 
@@ -112,9 +109,7 @@ public class DataServlet extends HttpServlet {
   }
 
   /**
-   * Creates a new entity for each quote and puts each new quote into Datastore
-   * @param request: the HTTP request; 
-   *        userInfo: a HashMap that contains user information connected to each quote
+   * Creates a new entity for each quote and puts each new quote into Datastore. 
    */ 
   private void putQuoteIntoDatastore(HttpServletRequest request, User user) {
     String quote = request.getParameter("quote");   
@@ -126,7 +121,7 @@ public class DataServlet extends HttpServlet {
       quoteEntity.setProperty(PROPERTY_NAME_TIMESTAMP, timestampMillis);
       quoteEntity.setProperty(PROPERTY_NAME_USER_EMAIL, user.getEmail()); 
 
-      Optional<String> nicknameOptional = util.getUserNickname(datastore, user.getUserId());
+      Optional<String> nicknameOptional = Util.getUserNickname(datastore, user.getUserId());
       nicknameOptional.ifPresent(nickname -> quoteEntity.setProperty(PROPERTY_NAME_NICKNAME, nickname));
  
       datastore.put(quoteEntity);

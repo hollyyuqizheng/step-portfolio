@@ -33,19 +33,18 @@ public final class Util {
   /**
    * @return an Optional of type String that represents the user's nickname. 
    */
-  public Optional<String> getUserNickname(DatastoreService datastore, String userId) {
+  public static Optional<String> getUserNickname(DatastoreService datastore, String userId) {
     Query query =
         new Query(PROPERTY_NAME_USER_INFO)
             .setFilter(new Query.FilterPredicate(PROPERTY_NAME_USER_ID, Query.FilterOperator.EQUAL, userId));
     PreparedQuery results = datastore.prepare(query);
     Entity entity = results.asSingleEntity();
-
     String nickname = null;
     if (entity != null) {
       nickname = (String) entity.getProperty(PROPERTY_NAME_NICKNAME);
     }
-
     Optional<String> nicknameOptional = Optional.ofNullable(nickname);
+
     return nicknameOptional;
   }
 }
