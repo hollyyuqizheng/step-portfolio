@@ -1,15 +1,15 @@
 @media screen and (min-width: 1300px) {
   #pageWrapper {
     display: grid;
-    grid-template-columns: 40% auto;
     grid-column-gap: 5%; 
+    grid-template-columns: 40% auto;
     padding-bottom: 3%;
   }
 
   #navbar, 
   #footer {
-    grid-column-start: 1;
     grid-column-end: span 2;
+    grid-column-start: 1;
     min-height: 5%; 
     padding-right: 40%; 
   }
@@ -28,19 +28,19 @@
     grid-row-start: 2; 
   }
 
+  #mapWrapper {
+    grid-column-end: span 2;
+    grid-column-start: 1;
+    grid-row-start: 3; 
+  }
+
   #surveyWrapper {
     grid-column-start: 1;
-    grid-row-start: 3;
+    grid-row-start: 4;
   }
 
   #loginWrapper {
     grid-column-start: 2;
-    grid-row-start:3; 
-  }
-
-  #mapWrapper {
-    grid-column-end: span 2;
-    grid-column-start: 1;
     grid-row-start: 4; 
   }
 
@@ -54,14 +54,14 @@
 #projects {
   margin-left: 5%;
   margin-right: 5%; 
+  max-width: 80%;
   padding-left: 5%; 
   padding-right: 5%; 
-  max-width: 80%;  
 }
 
 #introduction {
-  margin-right: 10%; 
   margin-left: 10%;
+  margin-right: 10%;
 }
 
 #navbar, 
@@ -80,9 +80,9 @@
   background-color: antiquewhite;
   color: black; 
   font: 20pt; 
+  margin: 5%;
   max-width: 100px;
   min-width: 80px; 
-  margin: 5%; 
   padding: 5px;
 }
 
@@ -94,22 +94,22 @@
 }
 
 #headshotWrapper {
-  min-width: 500px;
   max-width: 600px;
+  min-width: 500px;
   position: relative;
 }
 
 .headshot {
   display: block; 
-  min-width: 500px;
   max-width: 600px; 
+  min-width: 500px;
   width: 100%; 
 }
 
 #headshotCaption {
   background: rgba(0, 0, 0, 0.5);
+  bottom: 0;
   color: white; 
-  bottom: 0; 
   font-size: 20px;
   opacity: 0;
   padding: 10px;
@@ -149,12 +149,12 @@
 
 #projectWrapper {
   display: grid;
-  grid-template-columns: auto auto ; 
   grid-column-gap: 3%;
-  grid-row-gap: 0; 
-  margin-right: 20%; 
-  padding-top: 2%;
+  grid-row-gap: 0;
+  grid-template-columns: auto auto ; 
+  margin-right: 20%;
   padding-bottom: 3%; 
+  padding-top: 2%;
 }
 
 #projectNlp, 
@@ -171,8 +171,8 @@
 #projectDescriptionNlp, 
 #projectDescriptionTa, 
 #projectDescriptionHelmet {
-  font-size: 15px; 
   font-family: 'Trebuchet MS', Arial, sans-serif;
+  font-size: 15px; 
 }
 
 #projectNlp {
@@ -231,10 +231,13 @@
 }
 
 #mapWrapper {
+  margin-bottom: 5%; 
   min-height: 500px; 
+  min-width: 500px; 
   padding: 10%; 
 }
 
 #simpleMap {
-  height: 100%;
+  height: 500px;
+  width: 100%; 
 }
