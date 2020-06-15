@@ -74,12 +74,12 @@ function createPremadeMarkers() {
  */
 function createPremadeInfoWindow(map, marker, description) {
   const contentString = description;
-  const infowindow = new google.maps.InfoWindow({
+  const infoWindow = new google.maps.InfoWindow({
     content: contentString 
   });
 
   marker.addListener('click', function() {
-    infowindow.open(map, marker);
+    infoWindow.open(map, marker);
   });
 }
 
