@@ -3,10 +3,11 @@
  * translated text. 
  */
 function translateSection(elementId, languageCode) {
+
   const boxToTranslate = document.getElementById(elementId)
   const textToTranslate = boxToTranslate.innerText;
 
-  const resultContainer = document.getElementById(elementId.concat('Result'));
+  const resultContainer = document.getElementById(elementId.concat('-result'));
 
   resultContainer.innerText = 'Loading...';
 
