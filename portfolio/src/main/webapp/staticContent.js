@@ -16,11 +16,9 @@ function addHobby() {
 
 /**
  * Adds description for each project in project section. 
- * Input: string -- name of the selected project
- * Results: 
- * - change the text of the project description box so that the description text appears. 
- * - change the background color of the description box so that it seems like the box appears
- * - If the project doesn't exist, a general "something is wrong" is displayed in the description box 
+ * Changes the text of the project description box so that the description text appears. 
+ * Changes the background color of the description box so that it seems like the box appears
+ * If the project doesn't exist, a general "something is wrong" is displayed in the description box 
  */
 function addProjectDescription(project) {
   const projectName = project.toUpperCase(); 

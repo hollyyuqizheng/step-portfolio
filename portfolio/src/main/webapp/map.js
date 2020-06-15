@@ -14,10 +14,10 @@ function createMap() {
   allMarkers = [];
 
   // Center the map at the middle of the Pacific so that both sides can show. 
-  const latlongMidwayIsland = {lat: 28.2072, lng: -177.3735}; 
+  const latLngMidwayIsland = {lat: 28.2072, lng: -177.3735}; 
 
   const mapOptions = {
-    center: latlongMidwayIsland,  
+    center: latLngMidwayIsland,  
     zoom: 3 
   }; 
 
@@ -43,27 +43,27 @@ function createMap() {
  * These markers cannot be deleted by the user. 
  */
 function createPremadeMarkers() {
-  const latlongBrownUniv = {lat: 41.8268, lng: -71.4025}; 
-  const latlongHighSchool = {lat: 42.75, lng: -70.8983};
-  const latlongBeijing = {lat: 39.9042, lng: 116.4074}; 
+  const latLngBrownUniv = {lat: 41.8268, lng: -71.4025}; 
+  const latLngHighSchool = {lat: 42.75, lng: -70.8983};
+  const latLngBeijing = {lat: 39.9042, lng: 116.4074}; 
 
   const markerBrownUniv = new google.maps.Marker({
     map: map,
-    position: latlongBrownUniv,
+    position: latLngBrownUniv,
   });
   const infoBrownUniv = 'Where I am right now: Providence, RI'; 
   createPremadeInfoWindow(map, markerBrownUniv, infoBrownUniv); 
 
   const markerHighSchool = new google.maps.Marker({
     map: map,
-    position: latlongHighSchool,
+    position: latLngHighSchool,
   });
   const infoHighSchool = 'Where I went to high school: Byfield, MA'; 
   createPremadeInfoWindow(map, markerHighSchool, infoHighSchool); 
 
   const markerBeijing = new google.maps.Marker({
     map: map,
-    position: latlongBeijing,
+    position: latLngBeijing,
   });
   const infoBeijing = 'Where I grew up: Beijing, China'; 
   createPremadeInfoWindow(map, markerBeijing, infoBeijing); 
@@ -85,15 +85,17 @@ function createPremadeInfoWindow(map, marker, description) {
 
 /** Fetches markers from Datastore and adds them to the map. */
 function updateUserMarkers() {
-  fetch('/marker').then(response => response.json()).then(
-      (markerJson) => { 
-        markerJson.forEach((marker) => {   
-          createUserMarkerForDisplay(marker);  
+  fetch('/marker')
+    .then(response => response.json())
+    .then(
+        (markerJson) => { 
+          markerJson.forEach((marker) => {   
+            createUserMarkerForDisplay(marker);  
+          });
+          if (markerJson.content) {
+            updateMarkerListContent(markerJson);
+          }
         });
-        if (markerJson.content) {
-          updateMarkerListContent(markerJson);
-        }
-      });
 }
 
 /** Creates a marker based on a JSON entry passed in as the argument. */
@@ -114,13 +116,13 @@ function createUserMarkerForDisplay(markerJson) {
 
 /** Creates the info window for a marker created by the user. */
 function createUserInfoWindow (map, marker, content) {
-  const infowindow = new google.maps.InfoWindow({
+  const infoWindow = new google.maps.InfoWindow({
     content: content 
   });
 
   // Single click for opening the info window. 
   marker.addListener('click', function() {
-    infowindow.open(map, marker);
+    infoWindow.open(map, marker);
   });
 }
 
@@ -183,10 +185,11 @@ function postMarker(markerJson) {
   params.append('lng', markerJson.lng);
   params.append('content', markerJson.content);
   fetch('/marker', {method: 'POST', body: params})
-      .then(editMarker.setMap(null)); 
+    .then(editMarker.setMap(null)); 
 }
 
-/** Adds a new marker's latitude and longitude information to the  
+/** 
+  * Adds a new marker's latitude and longitude information to the  
   * list below the map.
   */
 function updateMarkerListContent(markerJson) { 

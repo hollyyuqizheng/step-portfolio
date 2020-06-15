@@ -16,8 +16,8 @@ function translateSection(elementId, languageCode) {
   params.append('languageCode', languageCode);
 
   fetch('/translate', {method: 'POST',body: params})
-      .then(response => response.text())
-      .then((translatedMessage) => { 
-        resultContainer.innerText = translatedMessage;
-      });
+    .then(response => response.text())
+    .then((translatedMessage) => { 
+      resultContainer.innerText = translatedMessage;
+    });
 } 
