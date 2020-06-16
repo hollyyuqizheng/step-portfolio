@@ -4,34 +4,41 @@
     <meta charset="UTF-8">
     <title>Holly's Portfolio</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBCc7dCxKF2LSSqlOxjLpcE6RWHTogBn0U"></script>
-    <script src="script.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDclSuK9bnsNtWr6lxOw3EStOLlOEnOmF8"></script>
+    <script src="staticContent.js"></script>
+    <script src="quotes.js"></script>
+    <script src="map.js"></script> 
+    <script src="translate.js"></script> 
   </head>
-  <body onload="createMap(); getQuotes()">
-    <div id="pageWrapper">
+  <body onload="getQuotes(); createMap()">
+    <div id="page-wrapper">
       <div id="navbar">
-        <div class="navButton" onClick="highlightSection('basicInfo')">Introduction</div> 
-        <div class="navButton" onClick="highlightSection('hobbyWrapper')">Hobbies</div> 
-        <div class="navButton" onClick="highlightSection('projects')">Projects</div> 
-        <div class="navButton"><a href="#surveyWrapper">Chat with me!</a></div>
+        <div class="nav-button" onClick="highlightSection('basic-info')">Introduction</div> 
+        <div class="nav-button" onClick="highlightSection('hobby-wrapper')">Hobbies</div> 
+        <div class="nav-button" onClick="highlightSection('projects')">Projects</div> 
+        <div class="nav-button"><a href="#map-wrapper">My Map</a></div>
+        <div class="nav-button"><a href="#survey-wrapper">Chat with me!</a></div>
       </div> 
       
       <div id="introduction">
         <h1>Hi there!</h1>
-        <div id="headshotWrapper">
+        <div id="headshot-wrapper">
           <img class="headshot" src="city.jpg" alt="Skyline of Beijing"/>
-          <div id="headshotCaption">My name is Holly, and this is one of my favorite views  
+          <div id="headshot-caption">My name is Holly, and this is one of my favorite views  
             in my hometown: Beijing, China.</div> 
         </div>   
         <br> 
+        <button onclick="translateSection('headshot-caption', 'es')">Translate image caption to Spanish</button> 
+        <div id="headshot-caption-result"></div> 
+        <br>
         <button onclick="addHobby()">What are my hobbies?</button>
-        <div id="hobbyWrapper" class="navbarSection">
-          <div id="hobbyContainer"></div>
+        <div id="hobby-wrapper" class="navbar-section">
+          <div id="hobby-container"></div>
         </div> 
       </div>
       
-      <div id="rightColumn"> 
-        <div id="basicInfo" class="navbarSection">
+      <div id="right-column"> 
+        <div id="basic-info" class="navbar-section">
           <h2>A few bullet points about me</h2>
           <ul> 
             <li>Studying Computer Science and Linguistics at Brown University</li>  
@@ -41,35 +48,48 @@
           </ul> 
         </div> 
       
-        <div id="projects" class="navbarSection">
+        <div id="projects" class="navbar-section">
           <h2>What I have been working on</h2> 
           <h3>(Click on each project to see more details!)</h3> 
-          <div id="projectWrapper">
-            <div id="projectNlp" onClick="addProjectDescription('Nlp')"> 
+          <div id="project-wrapper">
+            <div id="project-nlp" onClick="addProjectDescription('nlp')"> 
               <h3>Natural Language Processing research</h3>
             </div> 
-            <div id="projectDescriptionNlp"></div>
+            <div id="project-description-nlp"></div>
 
-            <div id="projectTa" onClick="addProjectDescription('Ta')"> 
+            <div id="project-ta" onClick="addProjectDescription('ta')"> 
               <h3>Teaching Assistant for Introductory CS course</h3>
             </div>
-            <div id="projectDescriptionTa"></div>
+            <div id="project-description-ta"></div>
           
-            <div id="projectHelmet" onClick="addProjectDescription('Helmet')"> 
+            <div id="project-helmet" onClick="addProjectDescription('helmet')"> 
               <h3>Multifunctional bike helmet</h3>         
             </div>
-            <div id="projectDescriptionHelmet"></div>  
+            <div id="project-description-helmet"></div>  
           </div>
         </div>
       </div>
 
-      <div id="surveyWrapper">
-        <h2>I'm always down to chat!</h2> 
-        <h2 id="loginText">Please log in first</h2>
+      <div id="map-wrapper">
+        <h2>A few important places for me</h2>
+        <div id="simple-map"></div>
+        <h2>What are the important places for you?</h2> 
+        <h2 id="login-text-map">Please log in at the bottom of the page first.</h2> 
+        <div id="show-after-login-map">
+          <h3>Click anywhere on the map to create a new marker</h3>
+          <h3>The places you have added are:</h3> 
+          <ul id="marker-list"></ul> 
+          <button onclick="deleteMarkers()">Delete all markers</button> 
+        </div>  
+      </div> 
 
-        <div id="showAfterLogin">
+      <div id="survey-wrapper">
+        <h2>I'm always down to chat!</h2> 
+        <h2 id="login-text">Please log in first</h2>
+
+        <div id="show-after-login-quotes">
           <form action="/data" method="POST">
-            <span id="submitQuoteForm">
+            <span id="submit-quote-form">
               Please tell me one of your favorite quotes from books or movies:
               <input type="text" name="quote">
               <input type="submit" />
@@ -78,11 +98,11 @@
           </form>
 
           <form action="/data" method="GET">
-            <span id="changeQuoteNumForm">
+            <span id="change-quote-num-form">
               The quotes you have entered will be posted here. 
               What is the maximum number of quotes you'd like to see?  
-              <label for="numToDisplay">Choose a number:</label>
-              <select name="numToDisplay" id="numToDisplay" onchange="getQuotes()">
+              <label for="num-to-display">Choose a number:</label>
+              <select name="num-to-display" id="num-to-display" onchange="getQuotes()">
                 <option type="number" value="3">3</option>
                 <option type="number" value="5" selected>5</option>
                 <option type="number" value="10">10</option>
@@ -90,24 +110,20 @@
             </span>
           </form> 
 
-          <ol id="quoteWrapper"></ol>
-          <button id="refreshQuotesButton" onclick="cleanData()">Delete all quotes</button>  
+          <ol id="quote-wrapper"></ol>
+          <button id="refresh-quotes-button" onclick="cleanData()">Delete</button>  
+          <div>You can only delete quotes you have submitted under your own nickname.</div>
         </div>
       </div> 
 
-      <div id="loginWrapper">
-        <h2 id="loginStatus"></h2>
-        <h2><a id="redirectText"></a></h2>   
-        <h2 id="createNickname">You don't have a nickname yet. Create one <a href="/nickname">here</a>.</h2>
+      <div id="login-wrapper">
+        <h2 id="login-status"></h2>
+        <h2><a id="redirect-text"></a></h2>   
+        <h2 id="create-nickname">You don't have a nickname yet. Create one <a href="/nickname">here</a>.</h2>
       </div>
 
-      <div id="mapWrapper">
-        <h2>Here's a map</h2>
-        <div id="simpleMap"></div>
-      </div> 
-
       <div id="footer">
-        <p>Designed for STEP weeks 2-5 project. Holly Zheng. 2020.</p> 
+        <p>Designed for STEP weeks 2-4 project. Holly Zheng. 2020.</p> 
       </div>
 
     </div>    

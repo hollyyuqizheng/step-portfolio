@@ -1,5 +1,5 @@
 @media screen and (min-width: 1300px) {
-  #pageWrapper {
+  #page-wrapper {
     display: grid;
     grid-column-gap: 5%; 
     grid-template-columns: 40% auto;
@@ -23,23 +23,23 @@
     grid-row-start: 2; 
   }
 
-  #rightColumn {
+  #right-column {
     grid-column-start: 2; 
     grid-row-start: 2; 
   }
 
-  #mapWrapper {
+  #map-wrapper {
     grid-column-end: span 2;
     grid-column-start: 1;
     grid-row-start: 3; 
   }
 
-  #surveyWrapper {
+  #survey-wrapper {
     grid-column-start: 1;
     grid-row-start: 4;
   }
 
-  #loginWrapper {
+  #login-wrapper {
     grid-column-start: 2;
     grid-row-start: 4; 
   }
@@ -50,7 +50,7 @@
 } 
 
 #introduction, 
-#basicInfo,
+#basic-info,
 #projects {
   margin-left: 5%;
   margin-right: 5%; 
@@ -76,7 +76,7 @@
   color: aliceblue; 
 }
 
-.navButton {
+.nav-button {
   background-color: antiquewhite;
   color: black; 
   font: 20pt; 
@@ -86,14 +86,14 @@
   padding: 5px;
 }
 
-#hobbyWrapper {
+#hobby-wrapper {
   height: 100px;
   margin-top: 1%;
   max-width: 300px;
   padding: 2%; 
 }
 
-#headshotWrapper {
+#headshot-wrapper {
   max-width: 600px;
   min-width: 500px;
   position: relative;
@@ -106,7 +106,7 @@
   width: 100%; 
 }
 
-#headshotCaption {
+#headshot-caption {
   background: rgba(0, 0, 0, 0.5);
   bottom: 0;
   color: white; 
@@ -119,7 +119,7 @@
   width: inherit; 
 }
 
-#headshotWrapper:hover #headshotCaption {
+#headshot-wrapper:hover #headshot-caption {
   opacity: 1; 
 }
 
@@ -147,7 +147,7 @@
   font-size: 25px;
 }
 
-#projectWrapper {
+#project-wrapper {
   display: grid;
   grid-column-gap: 3%;
   grid-row-gap: 0;
@@ -157,58 +157,58 @@
   padding-top: 2%;
 }
 
-#projectNlp, 
-#projectTa, 
-#projectHelmet, 
-#projectDescriptionNlp, 
-#projectDescriptionTa, 
-#projectDescriptionHelmet { 
+#project-nlp, 
+#project-ta, 
+#project-helmet, 
+#project-description-nlp, 
+#project-description-ta, 
+#project-description-helmet { 
   min-height: 100px;
   padding: 3%; 
   width: 350px;
 }
 
-#projectDescriptionNlp, 
-#projectDescriptionTa, 
-#projectDescriptionHelmet {
+#project-description-nlp, 
+#project-description-ta, 
+#project-description-helmet {
   font-family: 'Trebuchet MS', Arial, sans-serif;
   font-size: 15px; 
 }
 
-#projectNlp {
+#project-nlp {
   background-color: #6ccfe0;
   grid-column-start: 1;
   grid-row-start: 1;
 }
 
-#projectDescriptionNlp {
+#project-description-nlp {
   grid-column-start: 2;
   grid-row-start: 1;
 }
 
-#projectTa {
+#project-ta {
   background-color: #f7d36f;
   grid-column-start: 2;
   grid-row-start: 2;
 }
 
-#projectDescriptionTa {
+#project-description-ta {
   grid-column-start: 1;
   grid-row-start: 2;
 }
 
-#projectHelmet {
+#project-helmet {
   background-color: #e0b9f0;
   grid-column-start: 1;
   grid-row-start: 3;
 }
 
-#projectDescriptionHelmet {
+#project-description-helmet {
   grid-column-start: 2;
   grid-row-start: 3;
 }
 
-#surveyWrapper {
+#survey-wrapper {
   display: block; 
   background-color: yellow; 
   padding: 10%; 
@@ -216,28 +216,28 @@
   width: 100%;
 }
 
-#quoteWrapper {
+#quote-wrapper {
   width: 40%; 
 }
 
-#loginWrapper {
+#login-wrapper {
   background-color: antiquewhite; 
   padding: 10%; 
   width: 100%;
 }
 
-#createNickname {
+#create-nickname {
   visibility: hidden; 
 }
 
-#mapWrapper {
+#map-wrapper {
   margin-bottom: 5%; 
   min-height: 500px; 
   min-width: 500px; 
   padding: 10%; 
 }
 
-#simpleMap {
+#simple-map {
   height: 500px;
   width: 100%; 
 }
