@@ -160,8 +160,9 @@ function buildInfoWindowInput(lat, lng) {
   containerDiv.appendChild(submitButton);
 
   submitButton.onclick = () => {
-    // Add new marker if info window is not empty. 
-    if (textBox.value) {
+    // Add new marker if info window is not empty
+    // and the user is logged in. 
+    if (textBox.value && document.getElementById('show-after-login-map').style.visibility === 'visible') {
       const markerJson = {
         lat: lat,
         lng: lng,

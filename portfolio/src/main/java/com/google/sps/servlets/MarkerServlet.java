@@ -54,7 +54,11 @@ public class MarkerServlet extends HttpServlet {
     double lat = Double.parseDouble(request.getParameter(PROPERTY_NAME_LAT));
     double lng = Double.parseDouble(request.getParameter(PROPERTY_NAME_LONG));
     String markerContent = request.getParameter(PROPERTY_NAME_CONTENT);
-    Entity markerEntity = putMarkerInDatastore(lat, lng, markerContent);
+
+    UserService userService = UserServiceFactory.getUserService();
+    if (userService.isUserLoggedIn()) {
+      putMarkerInDatastore(lat, lng, markerContent);
+    }   
   }
 
   /** Fetches markers from Datastore. */
@@ -78,7 +82,7 @@ public class MarkerServlet extends HttpServlet {
   }
 
   /** Stores a marker in Datastore. */
-  public Entity putMarkerInDatastore(double lat, double lng, String markerContent) {
+  public void putMarkerInDatastore(double lat, double lng, String markerContent) { 
     Entity markerEntity = new Entity(PROPERTY_NAME_MARKER);
     markerEntity.setProperty(PROPERTY_NAME_LAT, lat);
     markerEntity.setProperty(PROPERTY_NAME_LONG, lng);
@@ -87,9 +91,6 @@ public class MarkerServlet extends HttpServlet {
     UserService userService = UserServiceFactory.getUserService();
     Optional<String> nicknameOptional = Util.getUserNickname(datastore, userService.getCurrentUser().getUserId());
     nicknameOptional.ifPresent(nickname -> markerEntity.setProperty(PROPERTY_NAME_NICKNAME, nickname));
-
     datastore.put(markerEntity);
-
-    return markerEntity; 
   }
 }
