@@ -147,7 +147,6 @@ public final class FindMeetingQuery {
     // A for loop is necessary because each consecutive pair 
     // of time ranges needs to be looked at at each iteration. 
     for (int i = 0; i < allBusyTimeRanges.size(); i++) {
-
       if (i == 0) {
         int earliestStart = allBusyTimeRanges.get(i).start();
         if (earliestStart >= meetingDuration) {
