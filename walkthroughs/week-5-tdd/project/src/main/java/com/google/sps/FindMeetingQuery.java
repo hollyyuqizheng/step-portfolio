@@ -24,8 +24,8 @@ public final class FindMeetingQuery {
   // Constants for 0 and the number of minutes in a day. 
   // 0 means 0 minute since start of a day. 
   // 1440 is the total number of minutes in a day, which marks the end of a day. 
-  private static final int START_OF_DAY = 0; 
-  private static final int END_OF_DAY = 1440; 
+  private static final int START_OF_DAY_MINUTES = 0; 
+  private static final int END_OF_DAY_MINUTES = 24 * 60; 
 
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
 
@@ -33,23 +33,23 @@ public final class FindMeetingQuery {
     Collection<String> optionalAttendees = request.getOptionalAttendees(); 
     long meetingDuration = request.getDuration(); 
 
-    List<TimeRange> mandatoryAttendeesBusyTimeslots = getAllBusyTimeslots(events, mandatoryAttendees); 
-    List<TimeRange> optionalAttendeesBusyTimeslots = getAllBusyTimeslots(events, optionalAttendees);
+    List<TimeRange> mandatoryAttendeesBusyTimeRanges = getAllBusyTimeRanges(events, mandatoryAttendees); 
+    List<TimeRange> optionalAttendeesBusyTimeRanges = getAllBusyTimeRanges(events, optionalAttendees);
 
-    sortBusyTimeslotsByStart(mandatoryAttendeesBusyTimeslots); 
-    sortBusyTimeslotsByStart(optionalAttendeesBusyTimeslots);
+    sortBusyTimeRangesByStart(mandatoryAttendeesBusyTimeRanges); 
+    sortBusyTimeRangesByStart(optionalAttendeesBusyTimeRanges);
 
-    List<TimeRange> mandatoryAttendeesEmptySlots = getEmptySlots(mandatoryAttendeesBusyTimeslots, meetingDuration); 
-    List<TimeRange> optionalAttendeesEmptySlots = getEmptySlots(optionalAttendeesBusyTimeslots, meetingDuration);
+    List<TimeRange> mandatoryAttendeesEmptyRanges = getEmptyTimeRanges(mandatoryAttendeesBusyTimeRanges, meetingDuration); 
+    List<TimeRange> optionalAttendeesEmptyRanges = getEmptyTimeRanges(optionalAttendeesBusyTimeRanges, meetingDuration);
 
-    if (mandatoryAttendees.size() == 0) {
-      return optionalAttendeesEmptySlots; 
-    } else if (optionalAttendees.size() == 0) {
-      return mandatoryAttendeesEmptySlots; 
+    if (mandatoryAttendees.isEmpty()) {
+      return optionalAttendeesEmptyRanges; 
+    } else if (optionalAttendees.isEmpty()) {
+      return mandatoryAttendeesEmptyRanges; 
     } else {
-      List<TimeRange> allEmptySlots = findCommonEmptySlots(
-          mandatoryAttendeesEmptySlots, optionalAttendeesEmptySlots, meetingDuration);
-      return allEmptySlots;
+      List<TimeRange> allEmptyTimeRanges = findCommonEmptyTimeRanges(
+          mandatoryAttendeesEmptyRanges, optionalAttendeesEmptyRanges, meetingDuration);
+      return allEmptyTimeRanges;
     }
   }
 
@@ -57,7 +57,7 @@ public final class FindMeetingQuery {
    * Constructs all the time ranges that any of the mandatory attendees is busy.
    * These time ranges cannot be part of the potential meeting time. 
    */ 
-  private List<TimeRange> getAllBusyTimeslots(Collection<Event> events, Collection<String> mandatoryAttendees) {
+  private List<TimeRange> getAllBusyTimeRanges(Collection<Event> events, Collection<String> mandatoryAttendees) {
     List<TimeRange> busyTimes = new ArrayList<TimeRange>();
 
     events.forEach((event) -> {
@@ -104,12 +104,12 @@ public final class FindMeetingQuery {
 
     // If the current event doesn't overlap with any existing busy time range,
     // add the current event's time range to the set of all busy time slots. 
-    if (! overlapped) {
+    if (!overlapped) {
       busyTimes.add(currEventTimeRange); 
     }
   }
 
-  /** Creates a new overall combined time range for two time ranges that overlap */ 
+  /** Creates a new overall combined time range for two time ranges that overlap. */ 
   private TimeRange getCombinedTimeRange(TimeRange a, TimeRange b) {
     int aStart = a.start();
     int aEnd = a.end();
@@ -117,79 +117,92 @@ public final class FindMeetingQuery {
     int bEnd = b.end();
 
     TimeRange combinedTimeRange = TimeRange.fromStartEnd(
-        Math.min(aStart, bStart), 
-        Math.max(aEnd, bEnd),
-        false 
-    ); 
+        /* start time = */ Math.min(aStart, bStart), 
+        /* end time = */ Math.max(aEnd, bEnd),
+        /* inclusive of end time = */ false); 
 
     return combinedTimeRange; 
   }
 
-  /** Sort a list of busy time ranges by their start time. */
-  private void sortBusyTimeslotsByStart(List<TimeRange> allBusyTimeslots) {
-    Collections.sort(allBusyTimeslots, TimeRange.ORDER_BY_START); 
+  /** Sorts a list of busy time ranges by their start time. */
+  private void sortBusyTimeRangesByStart(List<TimeRange> allBusyTimeRanges) {
+    Collections.sort(allBusyTimeRanges, TimeRange.ORDER_BY_START); 
   }
 
   /**
    * Finds all empty time ranges based on a list of busy time ranges and 
    * the length of the requested meeting
    */ 
-  private List<TimeRange> getEmptySlots(List<TimeRange> allBusyTimeslots, long meetingDuration) {
-    List<TimeRange> emptySlots = new ArrayList<TimeRange>();
+  private List<TimeRange> getEmptyTimeRanges(List<TimeRange> allBusyTimeRanges, long meetingDuration) {
+    List<TimeRange> emptyTimeRanges = new ArrayList<TimeRange>();
 
-    if (allBusyTimeslots.size() == 0 && meetingDuration <= END_OF_DAY) {
-      emptySlots.add(TimeRange.fromStartEnd(0, END_OF_DAY, false));
-      return emptySlots; 
+    if (allBusyTimeRanges.size() == 0 && meetingDuration <= END_OF_DAY_MINUTES) {
+      emptyTimeRanges.add(TimeRange.fromStartEnd(
+          /* start time = */ 0, 
+          /* end time = */ END_OF_DAY_MINUTES, 
+          /* inclusive of end time = */ false));
+      return emptyTimeRanges; 
     }
 
     // A for loop is necessary because each consecutive pair 
     // of time ranges needs to be looked at at each iteration. 
-    for (int i = 0; i < allBusyTimeslots.size(); i++ ) {
+    for (int i = 0; i < allBusyTimeRanges.size(); i++) {
 
       if (i == 0) {
-        int earliestStart = allBusyTimeslots.get(i).start();
+        int earliestStart = allBusyTimeRanges.get(i).start();
         if (earliestStart >= meetingDuration) {
-          emptySlots.add(TimeRange.fromStartEnd(START_OF_DAY, earliestStart, false)); 
+          emptyTimeRanges.add(TimeRange.fromStartEnd(
+            /* start time = */ START_OF_DAY_MINUTES, 
+            /* end time = */ earliestStart, 
+            /* inclusive of end time = */ false)); 
         }
       } 
 
-      if (i == allBusyTimeslots.size()-1) {
-        int latestEnd = allBusyTimeslots.get(i).end();
-        if ((END_OF_DAY - latestEnd) >= meetingDuration) {
-          emptySlots.add(TimeRange.fromStartEnd(latestEnd, END_OF_DAY, false)); 
+      if (i == allBusyTimeRanges.size() - 1) {
+        int latestEnd = allBusyTimeRanges.get(i).end();
+        if ((END_OF_DAY_MINUTES - latestEnd) >= meetingDuration) {
+          emptyTimeRanges.add(TimeRange.fromStartEnd(
+            /* start time = */ latestEnd, 
+            /* end time = */ END_OF_DAY_MINUTES, 
+            /* inclusive of end time = */ false)); 
         }
       } else {
-        int currEnd = allBusyTimeslots.get(i).end();
-        int nextStart = allBusyTimeslots.get(i+1).start(); 
+        int currEnd = allBusyTimeRanges.get(i).end();
+        int nextStart = allBusyTimeRanges.get(i + 1).start(); 
 
         if (nextStart - currEnd >= meetingDuration) {
-          emptySlots.add(TimeRange.fromStartEnd(currEnd, nextStart, false)); 
+          emptyTimeRanges.add(TimeRange.fromStartEnd(
+            /* start time = */ currEnd, 
+            /* end time = */ nextStart, 
+            /* inclusive of end time = */ false)); 
         }
       }
     } 
-    return emptySlots; 
+    return emptyTimeRanges; 
   }
 
   /** Finds the common time range between time ranges of two collections */ 
-  private List<TimeRange> findCommonEmptySlots(
-      List<TimeRange> mandatoryAttendeesEmptySlots, List<TimeRange> optionalAttendeesEmptySlots, long meetingDuration) {
+  private List<TimeRange> findCommonEmptyTimeRanges(
+      List<TimeRange> mandatoryAttendeesEmptyTimeRanges, 
+      List<TimeRange> optionalAttendeesEmptyTimeRanges, 
+      long meetingDuration) {
         
       // If any of mandatory or optional attendee has no free time, 
       // return the other group's free time slots. 
-      if (mandatoryAttendeesEmptySlots.size() == 0) {
-        return optionalAttendeesEmptySlots;
+      if (mandatoryAttendeesEmptyTimeRanges.isEmpty()) {
+        return optionalAttendeesEmptyTimeRanges;
       }
-      if (optionalAttendeesEmptySlots.size() == 0) {
-        return mandatoryAttendeesEmptySlots; 
+      if (optionalAttendeesEmptyTimeRanges.isEmpty()) {
+        return mandatoryAttendeesEmptyTimeRanges; 
       }    
 
-      List<TimeRange> commonSlots = new ArrayList<TimeRange>();
+      List<TimeRange> commonTimeRanges = new ArrayList<TimeRange>();
       int i = 0;
       int j = 0;
 
-      while (i < mandatoryAttendeesEmptySlots.size() && j < optionalAttendeesEmptySlots.size()) {
-        TimeRange mandatorySlot = mandatoryAttendeesEmptySlots.get(i);
-        TimeRange optionalSlot = optionalAttendeesEmptySlots.get(j);
+      while (i < mandatoryAttendeesEmptyTimeRanges.size() && j < optionalAttendeesEmptyTimeRanges.size()) {
+        TimeRange mandatorySlot = mandatoryAttendeesEmptyTimeRanges.get(i);
+        TimeRange optionalSlot = optionalAttendeesEmptyTimeRanges.get(j);
 
         // If two time ranges overlap, find the intersection of these two. 
         if (mandatorySlot.overlaps(optionalSlot)) {
@@ -197,10 +210,13 @@ public final class FindMeetingQuery {
           int end = Math.min(mandatorySlot.end(), optionalSlot.end());
           
           if (end - start >= meetingDuration) {
-            TimeRange commonSlot = TimeRange.fromStartEnd(start, end, false);
-            commonSlots.add(commonSlot);
+            TimeRange commonSlot = TimeRange.fromStartEnd(
+              /* start time = */ start, 
+              /* end time = */ end, 
+              /* inclusive of end time = */ false);
+            commonTimeRanges.add(commonSlot);
           } else {
-            commonSlots.add(mandatorySlot); 
+            commonTimeRanges.add(mandatorySlot); 
           }
         } 
 
@@ -208,12 +224,12 @@ public final class FindMeetingQuery {
         // because the time range that ends later might have intersection with other
         // time ranges in the time ranges taht come after the one that ends earlier.
         if (mandatorySlot.end() >= optionalSlot.end()) {
-          j ++; 
+          j++; 
         } else {
-          i ++; 
+          i++; 
         }   
       }
 
-      return commonSlots; 
+      return commonTimeRanges; 
   }
 }
