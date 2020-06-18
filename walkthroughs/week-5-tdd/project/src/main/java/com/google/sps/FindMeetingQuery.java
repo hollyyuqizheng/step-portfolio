@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.List;
 
 public final class FindMeetingQuery {
-
   /**
    * Finds a list of potential meeting times based on the meeting request and a list of existing
    * events and their attendees. Picks time slots if one or more time slots exists so that both
@@ -28,7 +27,6 @@ public final class FindMeetingQuery {
    * the mandatory attendees.
    */
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
-
     Collection<String> mandatoryAttendees = request.getAttendees();
     Collection<String> optionalAttendees = request.getOptionalAttendees();
     long meetingDurationMinutes = request.getDuration();
@@ -202,7 +200,6 @@ public final class FindMeetingQuery {
       List<TimeRange> mandatoryAttendeesFreeTimeRanges,
       List<TimeRange> optionalAttendeesFreeTimeRanges,
       long meetingDurationMinutes) {
-
     // If any of mandatory or optional attendee has no free time,
     // return the other group's free time slots.
     if (mandatoryAttendeesFreeTimeRanges.isEmpty()) {

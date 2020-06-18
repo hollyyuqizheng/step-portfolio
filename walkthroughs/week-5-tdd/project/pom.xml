@@ -47,6 +47,40 @@
         <artifactId>appengine-maven-plugin</artifactId>
         <version>1.9.71</version>
       </plugin>
+      <plugin>
+        <groupId>com.cosium.code</groupId>
+        <artifactId>git-code-format-maven-plugin</artifactId>
+        <version>2.5</version>
+        <executions>
+          <execution>
+            <id>install-formatter-hook</id>
+            <goals>
+              <goal>install-hooks</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>validate-code-format</id>
+            <goals>
+              <goal>validate-code-format</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.cosium.code</groupId>
+        <artifactId>git-code-format-maven-plugin</artifactId>
+        <version>2.5</version>
+        <executions>
+        </executions>
+        <configuration>
+          <googleJavaFormatOptions>
+            <aosp>false</aosp>
+            <fixImportsOnly>false</fixImportsOnly>
+            <skipSortingImports>false</skipSortingImports>
+            <skipRemovingUnusedImports>false</skipRemovingUnusedImports>
+          </googleJavaFormatOptions>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 </project>
