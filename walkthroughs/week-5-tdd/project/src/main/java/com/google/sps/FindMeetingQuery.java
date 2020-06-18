@@ -96,12 +96,12 @@ public final class FindMeetingQuery {
    * @return an updated list of busy times after overlaps are handled
    */ 
   private List<TimeRange> getUpdatedBusyTimeRanges(
-    TimeRange currEventTimeRange, Collection<TimeRange> busyTimes) {
+    TimeRange currEventTimeRange, Collection<TimeRange> originalBusyTimes) {
     boolean overlapped = false; 
 
     List<TimeRange> updatedBusyTimes = new ArrayList<TimeRange> (); 
 
-    for (TimeRange busyTimeRange : busyTimes) {
+    for (TimeRange busyTimeRange : originalBusyTimes) {
       if (currEventTimeRange.overlaps(busyTimeRange)) {
         TimeRange combinedTimeRange = getCombinedTimeRange(currEventTimeRange, busyTimeRange);
         updatedBusyTimes.add(combinedTimeRange);
@@ -148,7 +148,6 @@ public final class FindMeetingQuery {
   private List<TimeRange> getFreeTimeRanges(List<TimeRange> allBusyTimeRanges, long meetingDurationMinutes) {
     List<TimeRange> freeTimeRanges = new ArrayList<TimeRange>();
 
-    // 
     if (allBusyTimeRanges.isEmpty() && meetingDurationMinutes <= TimeRange.END_OF_DAY) {
       freeTimeRanges.add(TimeRange.fromStartEnd(
           /* start= */ 0, 
@@ -173,6 +172,9 @@ public final class FindMeetingQuery {
       if (i == allBusyTimeRanges.size() - 1) {
         int latestEnd = allBusyTimeRanges.get(i).end();
         if ((TimeRange.END_OF_DAY - latestEnd) >= meetingDurationMinutes) {
+          // According to TimeRange class's implementation of the time ranges,
+          // TimeRange.END_OF_DAY variable should have "true" for the 
+          // "inclusive" parameter. 
           freeTimeRanges.add(TimeRange.fromStartEnd(
             /* start= */ latestEnd, 
             /* end= */ TimeRange.END_OF_DAY, 
@@ -213,29 +215,29 @@ public final class FindMeetingQuery {
       int j = 0;
 
       while (i < mandatoryAttendeesFreeTimeRanges.size() && j < optionalAttendeesFreeTimeRanges.size()) {
-        TimeRange mandatorySlot = mandatoryAttendeesFreeTimeRanges.get(i);
-        TimeRange optionalSlot = optionalAttendeesFreeTimeRanges.get(j);
+        TimeRange mandatoryTimeRange = mandatoryAttendeesFreeTimeRanges.get(i);
+        TimeRange optionalTimeRange = optionalAttendeesFreeTimeRanges.get(j);
 
         // If two time ranges overlap, find the intersection of these two. 
-        if (mandatorySlot.overlaps(optionalSlot)) {
-          int start = Math.max(mandatorySlot.start(), optionalSlot.start());
-          int end = Math.min(mandatorySlot.end(), optionalSlot.end());
+        if (mandatoryTimeRange.overlaps(optionalTimeRange)) {
+          int start = Math.max(mandatoryTimeRange.start(), optionalTimeRange.start());
+          int end = Math.min(mandatoryTimeRange.end(), optionalTimeRange.end());
           
           if (end - start >= meetingDurationMinutes) {
-            TimeRange commonSlot = TimeRange.fromStartEnd(
+            TimeRange commonTimeRange = TimeRange.fromStartEnd(
               /* start= */ start, 
               /* end= */ end, 
               /* inclusive= */ false);
-            commonTimeRanges.add(commonSlot);
+            commonTimeRanges.add(commonTimeRange);
           } else {
-            commonTimeRanges.add(mandatorySlot); 
+            commonTimeRanges.add(mandatoryTimeRange); 
           }
         } 
 
         // Move the pointer pointing at the time range that ends earlier,
         // because the time range that ends later might have intersection with other
         // time ranges in the time ranges taht come after the one that ends earlier.
-        if (mandatorySlot.end() >= optionalSlot.end()) {
+        if (mandatoryTimeRange.end() >= optionalTimeRange.end()) {
           j++; 
         } else {
           i++; 
