@@ -17,7 +17,9 @@ package com.google.sps;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public final class FindMeetingQuery {
   /**
@@ -31,72 +33,74 @@ public final class FindMeetingQuery {
     Collection<String> optionalAttendees = request.getOptionalAttendees();
     long meetingDurationMinutes = request.getDuration();
 
+    List<String> combinedAttendees = new ArrayList<String>(mandatoryAttendees);
+    combinedAttendees.addAll(optionalAttendees);
+
+    List<TimeRange> combinedBusyTimeRanges = getAllBusyTimeRanges(events, combinedAttendees);
+    sortTimeRangesByStart(combinedBusyTimeRanges);
+    List<TimeRange> combinedFreeTimeRanges =
+        getFreeTimeRanges(combinedBusyTimeRanges, meetingDurationMinutes);
+
+    if (mandatoryAttendees.isEmpty()
+        || optionalAttendees.isEmpty()
+        || !combinedFreeTimeRanges.isEmpty()) {
+      return combinedFreeTimeRanges;
+    }
+
+    // If the combined free time list is empty, it means there is not time block
+    // where all mandatory and optional attendees are available.
+    // Runs the procedure on mandatory attendees only to find free times for them.
     List<TimeRange> mandatoryAttendeesBusyTimeRanges =
         getAllBusyTimeRanges(events, mandatoryAttendees);
-    List<TimeRange> optionalAttendeesBusyTimeRanges =
-        getAllBusyTimeRanges(events, optionalAttendees);
-
     sortTimeRangesByStart(mandatoryAttendeesBusyTimeRanges);
-    sortTimeRangesByStart(optionalAttendeesBusyTimeRanges);
 
-    List<TimeRange> mandatoryAttendeesFreeTimeRanges =
-        getFreeTimeRanges(mandatoryAttendeesBusyTimeRanges, meetingDurationMinutes);
-    List<TimeRange> optionalAttendeesFreeTimeRanges =
-        getFreeTimeRanges(optionalAttendeesBusyTimeRanges, meetingDurationMinutes);
-
-    if (mandatoryAttendees.isEmpty()) {
-      return optionalAttendeesFreeTimeRanges;
-    } else if (optionalAttendees.isEmpty()) {
-      return mandatoryAttendeesFreeTimeRanges;
-    } else {
-      return findCommonFreeTimeRanges(
-          mandatoryAttendeesFreeTimeRanges,
-          optionalAttendeesFreeTimeRanges,
-          meetingDurationMinutes);
-    }
+    return getFreeTimeRanges(mandatoryAttendeesBusyTimeRanges, meetingDurationMinutes);
   }
 
   /**
-   * Constructs all the time ranges that any of the mandatory attendees is busy. These time ranges
+   * Constructs all the time ranges that any of the required attendees is busy. These time ranges
    * cannot be part of the potential meeting time.
    */
   private List<TimeRange> getAllBusyTimeRanges(
-      Collection<Event> events, Collection<String> mandatoryAttendees) {
-    List<TimeRange> busyTimes = new ArrayList<TimeRange>();
+      Collection<Event> events, Collection<String> requiredAttendees) {
+
+    List<TimeRange> busyTimesImmutable = new ArrayList<TimeRange>();
+
+    Set<String> requiredAttendeeSet = new HashSet<>();
+    requiredAttendees.forEach(
+        (attendee) -> {
+          requiredAttendeeSet.add(attendee);
+        });
 
     for (Event event : events) {
-      Collection<String> eventAttendees = event.getAttendees();
+      // First, find if any of the required attendees are in the current event's guest list.
+      boolean hasAnyAttendee =
+          event.getAttendees().stream().filter(requiredAttendeeSet::contains).findAny().isPresent();
 
-      for (String attendee : eventAttendees) {
-        // If the current event's attendee list contains a mandatory attendee,
-        // adds this event's time range to the set of all busy times,
-        // after checking for overlapping time ranges.
-        if (mandatoryAttendees.contains(attendee)) {
-          TimeRange currEventTimeRange = event.getWhen();
-
-          busyTimes = getUpdatedBusyTimeRanges(currEventTimeRange, busyTimes);
-
-          // If any one of the mandatory attendees is in this event's guest list,
-          // this event's time range needs to be considered busy.
-          // Breaks out of the for-each loop because there is no need to look
-          // at the rest of the event's guest list.
-          break;
-        }
+      if (!hasAnyAttendee) {
+        continue;
       }
+
+      // If the current event's attendee list contains a required attendee,
+      // adds this event's time range to the set of all busy times,
+      // after checking for overlapping time ranges.
+      TimeRange currEventTimeRange = event.getWhen();
+      busyTimesImmutable = getUpdatedBusyTimeRanges(currEventTimeRange, busyTimesImmutable);
     }
-    return busyTimes;
+    return busyTimesImmutable;
   }
 
   /**
    * Compares a given event's time slot with all the existing busy time slots. Merges the current
    * event time slot with a busy time slot if they overlap. Adds the current event's time slot to
-   * the list of busy slots in the end.
+   * the list of busy slots in the end if there is no overlap between the current event's time and
+   * any of the existing busy time ranges.
    *
    * @param current event's time range; a collection of busy time slots
    * @return an updated list of busy times after overlaps are handled
    */
   private List<TimeRange> getUpdatedBusyTimeRanges(
-      TimeRange currEventTimeRange, Collection<TimeRange> originalBusyTimes) {
+      TimeRange currEventTimeRange, List<TimeRange> originalBusyTimes) {
     boolean isOverlapped = false;
 
     List<TimeRange> updatedBusyTimes = new ArrayList<TimeRange>();
@@ -128,11 +132,17 @@ public final class FindMeetingQuery {
     int bStart = b.start();
     int bEnd = b.end();
 
+    boolean isInclusive = false;
+    if ((aEnd > bEnd && a.end() == TimeRange.END_OF_DAY)
+        || (bEnd > aEnd && b.end() == TimeRange.END_OF_DAY)) {
+      isInclusive = true;
+    }
+
     TimeRange combinedTimeRange =
         TimeRange.fromStartEnd(
             /* start= */ Math.min(aStart, bStart),
             /* end= */ Math.max(aEnd, bEnd),
-            /* inclusive= */ false);
+            /* inclusive= */ isInclusive);
 
     return combinedTimeRange;
   }
@@ -193,57 +203,5 @@ public final class FindMeetingQuery {
       }
     }
     return freeTimeRanges;
-  }
-
-  /** Finds the common time range between time ranges of two collections. */
-  private List<TimeRange> findCommonFreeTimeRanges(
-      List<TimeRange> mandatoryAttendeesFreeTimeRanges,
-      List<TimeRange> optionalAttendeesFreeTimeRanges,
-      long meetingDurationMinutes) {
-    // If any of mandatory or optional attendee has no free time,
-    // return the other group's free time slots.
-    if (mandatoryAttendeesFreeTimeRanges.isEmpty()) {
-      return optionalAttendeesFreeTimeRanges;
-    }
-    if (optionalAttendeesFreeTimeRanges.isEmpty()) {
-      return mandatoryAttendeesFreeTimeRanges;
-    }
-
-    List<TimeRange> commonTimeRanges = new ArrayList<TimeRange>();
-    // i indexes into mandatoryAttendeesFreeTimeRanges
-    // j indexes into optionalAttendeesFreeTimeRanges
-    int i = 0;
-    int j = 0;
-
-    while (i < mandatoryAttendeesFreeTimeRanges.size()
-        && j < optionalAttendeesFreeTimeRanges.size()) {
-      TimeRange mandatoryTimeRange = mandatoryAttendeesFreeTimeRanges.get(i);
-      TimeRange optionalTimeRange = optionalAttendeesFreeTimeRanges.get(j);
-
-      // If two time ranges overlap, find the intersection of these two.
-      if (mandatoryTimeRange.overlaps(optionalTimeRange)) {
-        int start = Math.max(mandatoryTimeRange.start(), optionalTimeRange.start());
-        int end = Math.min(mandatoryTimeRange.end(), optionalTimeRange.end());
-
-        if (end - start >= meetingDurationMinutes) {
-          TimeRange commonTimeRange =
-              TimeRange.fromStartEnd(/* start= */ start, /* end= */ end, /* inclusive= */ false);
-          commonTimeRanges.add(commonTimeRange);
-        } else {
-          commonTimeRanges.add(mandatoryTimeRange);
-        }
-      }
-
-      // Move the pointer pointing at the time range that ends earlier,
-      // because the time range that ends later might have intersection with other
-      // time ranges in the time ranges taht come after the one that ends earlier.
-      if (mandatoryTimeRange.end() >= optionalTimeRange.end()) {
-        j++;
-      } else {
-        i++;
-      }
-    }
-
-    return commonTimeRanges;
   }
 }
